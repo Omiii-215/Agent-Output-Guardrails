@@ -10,7 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from apps.api.routes import cases, evidence, identity
+from apps.api.routes import cases, evidence, identity, operations
 from backend.adapters.oidc.verifier import OidcVerifier
 from backend.config import Settings, get_settings
 from backend.errors import DomainError
@@ -27,7 +27,7 @@ from backend.telemetry.tracing import (
 API_VERSION = "v1"
 
 
-ROUTERS = (identity.router, evidence.router, cases.router)
+ROUTERS = (identity.router, evidence.router, cases.router, operations.router)
 
 
 def create_app(settings: Settings | None = None, db: Database | None = None) -> FastAPI:

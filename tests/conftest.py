@@ -104,3 +104,8 @@ def world(db: Database, two_orgs, app) -> World:
 @pytest.fixture
 def acme_operator(db: Database, world: World):
     return actor_for(db, "operator@acme.test", world.acme)
+
+
+@pytest.fixture
+def runtime(app):
+    return app.state.runtime
