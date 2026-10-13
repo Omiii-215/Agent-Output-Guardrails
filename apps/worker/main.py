@@ -1,7 +1,7 @@
 """Worker entry point.
 
 Runs the durable job loop from the same codebase as the API. Job handlers are
-registered by backend modules (see ``backend/handlers.py``).
+registered by backend modules (see ``backend/bootstrap.py``).
 """
 
 from __future__ import annotations
@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse
 import logging
 
-from backend import handlers  # noqa: F401  (registers handlers)
+from backend import bootstrap
 from backend.config import get_settings
 from backend.runtime import build_runtime
 from backend.telemetry.tracing import configure_logging
@@ -23,6 +23,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--once", action="store_true", help="process available jobs and exit")
     args = parser.parse_args(argv)
     configure_logging()
+    bootstrap.load()
     settings = get_settings()
     runtime = build_runtime(settings)
     log.info("worker starting in %s", settings.env)

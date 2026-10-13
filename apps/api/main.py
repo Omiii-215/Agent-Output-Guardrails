@@ -10,7 +10,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from apps.api.routes import cases, evidence, identity, operations
+from apps.api.routes import cases, evidence, identity, operations, policies
+from backend import bootstrap
 from backend.adapters.oidc.verifier import OidcVerifier
 from backend.config import Settings, get_settings
 from backend.errors import DomainError
@@ -27,12 +28,19 @@ from backend.telemetry.tracing import (
 API_VERSION = "v1"
 
 
-ROUTERS = (identity.router, evidence.router, cases.router, operations.router)
+ROUTERS = (
+    identity.router,
+    evidence.router,
+    cases.router,
+    policies.router,
+    operations.router,
+)
 
 
 def create_app(settings: Settings | None = None, db: Database | None = None) -> FastAPI:
     settings = settings or get_settings()
     configure_logging()
+    bootstrap.load()
 
     app = FastAPI(
         title="FinGuard API",

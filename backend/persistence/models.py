@@ -5,6 +5,7 @@ from backend.evidence import models as evidence_models  # noqa: F401
 from backend.identity import models as identity_models  # noqa: F401
 from backend.persistence import idempotency, jobs  # noqa: F401
 from backend.persistence.base import Base
+from backend.policies import models as policy_models  # noqa: F401
 from backend.telemetry import audit  # noqa: F401
 
 metadata = Base.metadata
