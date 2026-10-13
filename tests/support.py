@@ -57,3 +57,9 @@ class _Bound:
 
     def patch(self, url, **kw):
         return self._call("PATCH", url, **kw)
+
+
+def actor_for(db, subject, organization_id):
+    from backend.identity.service import resolve_user
+
+    return resolve_user(db, subject, organization_id)

@@ -24,7 +24,7 @@ from backend.identity.models import Organization
 from backend.persistence.database import Database
 from backend.persistence.embedded import PostgresUrls, create_database, migrate
 from backend.persistence.models import metadata
-from tests.support import BACKEND, ApiClient, add_member
+from tests.support import BACKEND, ApiClient, actor_for, add_member
 
 
 @pytest.fixture(scope="session")
@@ -99,3 +99,8 @@ def world(db: Database, two_orgs, app) -> World:
         add_member(db, org, f"author@{domain}", ["policy_author"])
         add_member(db, org, f"publisher@{domain}", ["policy_publisher"])
     return World(acme=acme, globex=globex, api=ApiClient(TestClient(app)))
+
+
+@pytest.fixture
+def acme_operator(db: Database, world: World):
+    return actor_for(db, "operator@acme.test", world.acme)
