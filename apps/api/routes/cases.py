@@ -195,3 +195,35 @@ def case_history(
         case = tx.get(Case, case_id)
         related = detail.compose(tx, case).related_ids
         return [AuditOut.of(e) for e in cases.history(tx, case_id, related)]
+
+
+@router.get("/modules/{code}")
+def module_detail(code: str):
+    from backend.errors import NotFound
+    from backend.modules.gated import CONTRACTS
+    from backend.modules.registry import module_info
+
+    try:
+        info = module_info(code)
+    except ValueError:
+        raise NotFound("Unknown module") from None
+    contract = CONTRACTS.get(code)
+    return {
+        "code": info.code.value,
+        "name": info.name,
+        "stage": info.stage,
+        "enabled": info.enabled,
+        "simulation_only": info.simulation_only,
+        "summary": info.summary,
+        "activation_gate": info.activation_gate,
+        "contract": (
+            {
+                "input_schema": contract.input_model.model_json_schema(),
+                "required_evidence": list(contract.required_evidence),
+                "output": contract.output,
+                "boundary": contract.boundary,
+            }
+            if contract
+            else None
+        ),
+    }
