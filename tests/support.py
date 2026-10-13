@@ -165,3 +165,28 @@ def propose(world, runtime, detail, persona="operator", **overrides):
     assert resp.status_code == 201, resp.text
     run_once(runtime)
     return world.acme_as(persona).get(f"/v1/action-proposals/{resp.json()['id']}").json()
+
+
+def request_approval(world, proposal, persona="operator"):
+    resp = world.acme_as(persona).post(
+        "/v1/approval-requests", json={"proposal_id": proposal["id"]}
+    )
+    assert resp.status_code == 201, resp.text
+    return resp.json()
+
+
+def decide(world, request, persona="approver", decision="APPROVE", reason="Checked evidence"):
+    current = world.acme_as("approver").get(f"/v1/approval-requests/{request['id']}").json()
+    return world.acme_as(persona).post(
+        f"/v1/approval-requests/{request['id']}/decisions",
+        json={"decision": decision, "reason": reason, "expected_revision": current["revision"]},
+    )
+
+
+def approved_proposal(world, runtime, **invoice_kwargs):
+    detail = reviewed_case(world, runtime, **invoice_kwargs)
+    proposal = propose(world, runtime, detail)
+    request = request_approval(world, proposal)
+    resp = decide(world, request)
+    assert resp.status_code == 201, resp.text
+    return detail, proposal, resp.json()

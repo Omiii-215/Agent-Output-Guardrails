@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 
 from apps.api.routes import (
     actions,
+    approvals,
     cases,
     evidence,
     identity,
@@ -43,6 +44,7 @@ ROUTERS = (
     policies.router,
     invoices.router,
     actions.router,
+    approvals.router,
     operations.router,
 )
 
