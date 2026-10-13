@@ -42,4 +42,4 @@ extend-exclude = ["fintech-guardrails-blueprint", "apps/web"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
-ignore = ["RUF012", "B008"]
+ignore = ["RUF001", "RUF002", "RUF003", "RUF012", "B008"]
