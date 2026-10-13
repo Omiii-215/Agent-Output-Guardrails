@@ -1,0 +1,10 @@
+.git
+.venv
+var
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/.next
+fintech-guardrails-blueprint
+tests
+.claude

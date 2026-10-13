@@ -29,3 +29,6 @@ var/
 .env
 .env.*
 !.env.example
+
+# Local editor/agent tooling
+.claude/

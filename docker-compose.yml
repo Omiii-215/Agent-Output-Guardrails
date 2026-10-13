@@ -1,0 +1,59 @@
+# Local stack: PostgreSQL, migrations, API, worker and web, with synthetic data only.
+#   docker compose up --build
+#   docker compose run --rm api python scripts/seed_demo.py
+x-backend-env: &backend-env
+  FINGUARD_ENV: development
+  FINGUARD_DATABASE_URL: postgresql+psycopg://finguard_app:finguard_app_dev@db:5432/finguard
+  FINGUARD_DATABASE_ADMIN_URL: postgresql+psycopg://finguard_owner:finguard_owner_dev@db:5432/finguard
+  FINGUARD_OBJECT_STORE_PATH: /app/var/objects
+  FINGUARD_WEB_ORIGIN: http://localhost:3000
+
+services:
+  db:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: finguard
+      POSTGRES_USER: finguard_owner
+      POSTGRES_PASSWORD: finguard_owner_dev
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/01-roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finguard_owner -d finguard"]
+      interval: 3s
+      retries: 20
+    ports: ["5432:5432"]
+
+  migrate:
+    build: .
+    environment: *backend-env
+    command: ["python", "scripts/db_bootstrap.py"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  api:
+    build: .
+    environment: *backend-env
+    volumes: [objects:/app/var/objects]
+    ports: ["8000:8000"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  worker:
+    build: .
+    environment: *backend-env
+    volumes: [objects:/app/var/objects]
+    command: ["python", "-m", "apps.worker.main"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  web:
+    build:
+      context: apps/web
+      args: { NEXT_PUBLIC_API_URL: "http://localhost:8000" }
+    ports: ["3000:3000"]
+    depends_on: [api]
+
+volumes:
+  pgdata:
+  objects:

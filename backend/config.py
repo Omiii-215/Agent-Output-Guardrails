@@ -20,7 +20,7 @@ _STUB_ALLOWED: frozenset[str] = frozenset({"development", "test"})
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="FINGUARD_", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="FINGUARD_", env_file=".env", extra="ignore")
 
     env: Environment = "development"
     database_url: str = "sqlite:///var/finguard.sqlite3"
