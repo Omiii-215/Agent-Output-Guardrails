@@ -121,3 +121,72 @@ class SpendReservation(TenantMixin, TimestampMixin, Base):
     amount_minor: Mapped[int] = mapped_column(BigInteger)
     state: Mapped[str] = mapped_column(String(20), default="ACTIVE")  # ACTIVE|COMMITTED|RELEASED
     updated_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class IntentState:
+    CREATED = "CREATED"
+    RESERVED = "RESERVED"
+    SUBMITTING = "SUBMITTING"
+    ACCEPTED = "ACCEPTED"
+    UNKNOWN = "UNKNOWN"
+    FAILED = "FAILED"
+    SETTLED = "SETTLED"
+    REVERSED = "REVERSED"
+    INVALIDATED = "INVALIDATED"
+
+
+class ActionIntent(TenantMixin, TimestampMixin, Base):
+    """One logical execution of an approved proposal, with a stable provider key."""
+
+    __tablename__ = "action_intent"
+    __table_args__ = (
+        _fk("proposal_id", "action_proposal"),
+        _fk("approval_request_id", "approval_request"),
+        UniqueConstraint("organization_id", "proposal_id"),
+        UniqueConstraint("organization_id", "provider_idempotency_key"),
+    )
+
+    proposal_id: Mapped[uuid.UUID]
+    approval_request_id: Mapped[uuid.UUID]
+    case_id: Mapped[uuid.UUID]
+    action_digest: Mapped[str] = mapped_column(String(80))
+    mode: Mapped[str] = mapped_column(String(20))
+    amount_minor: Mapped[int] = mapped_column(BigInteger)
+    currency: Mapped[str] = mapped_column(String(3))
+    state: Mapped[str] = mapped_column(String(20), default=IntentState.CREATED)
+    state_reason: Mapped[str | None] = mapped_column(String(1000))
+    provider: Mapped[str] = mapped_column(String(40))
+    provider_idempotency_key: Mapped[str] = mapped_column(String(200))
+    provider_reference: Mapped[str | None] = mapped_column(String(100))
+    attempts: Mapped[int] = mapped_column(default=0)
+    created_by: Mapped[str] = mapped_column(String(200))
+    claimed_at: Mapped[datetime | None]
+    revision: Mapped[int] = mapped_column(default=1)
+    updated_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class ActionAttempt(TenantMixin, TimestampMixin, Base):
+    __tablename__ = "action_attempt"
+    __append_only__ = True
+    __table_args__ = (_fk("intent_id", "action_intent"),)
+
+    intent_id: Mapped[uuid.UUID] = mapped_column(index=True)
+    attempt_number: Mapped[int]
+    kind: Mapped[str] = mapped_column(String(20))  # SUBMIT | STATUS | WEBHOOK
+    provider_idempotency_key: Mapped[str] = mapped_column(String(200))
+    request_digest: Mapped[str] = mapped_column(String(80))
+    outcome: Mapped[str] = mapped_column(String(20))
+    provider_reference: Mapped[str | None] = mapped_column(String(100))
+    response_code: Mapped[str | None] = mapped_column(String(60))
+
+
+class WebhookReceipt(TenantMixin, Base):
+    __tablename__ = "webhook_receipt"
+    __table_args__ = (UniqueConstraint("organization_id", "connector", "provider_event_id"),)
+
+    connector: Mapped[str] = mapped_column(String(40))
+    provider_event_id: Mapped[str] = mapped_column(String(100))
+    payload: Mapped[dict[str, Any]]
+    payload_hash: Mapped[str] = mapped_column(String(80))
+    processing_state: Mapped[str] = mapped_column(String(20), default="RECEIVED")
+    received_at: Mapped[datetime] = mapped_column(default=utcnow)

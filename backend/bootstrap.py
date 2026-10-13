@@ -15,6 +15,8 @@ _MODULES = (
     "backend.actions.proposals",
     "backend.actions.handlers",
     "backend.approvals.service",
+    "backend.actions.execution",
+    "backend.actions.execution_handlers",
     "backend.modules.invoices.action_source",
 )
 

@@ -5,11 +5,13 @@ from __future__ import annotations
 from backend.actions import sources
 from backend.actions.sources import PaymentFacts
 from backend.cases.models import Case, CaseStatus
+from backend.domain.clock import utcnow
 from backend.domain.money import Money
 from backend.errors import Conflict
 from backend.persistence.database import TenantSession
 from backend.policies import service as policies
 from backend.policies.models import InputSnapshot
+from backend.telemetry import audit
 
 from . import service
 from .models import BeneficiaryVersion, Invoice, PaymentRecord, Vendor
@@ -88,3 +90,32 @@ def invoice_payment_facts(tx: TenantSession, case: Case) -> PaymentFacts:
 
 
 sources.register("invoices", invoice_payment_facts)
+
+
+def record_settlement(tx: TenantSession, case: Case, details: dict) -> None:
+    """A settled payment becomes paid-invoice history, so a resubmitted invoice is caught."""
+    invoice = tx.first(tx.select(Invoice).where(Invoice.case_id == case.id))
+    version = service.current_version(tx, invoice)
+    record = tx.add(
+        PaymentRecord(
+            vendor_id=invoice.vendor_id,
+            number_normalized=version.number_normalized or "",
+            currency=details["currency"],
+            amount_minor=details["amount_minor"],
+            paid_on=utcnow().date(),
+            external_reference=details["provider_reference"] or str(details["intent_id"]),
+            source="SIMULATION" if details["mode"] == "SIMULATED" else "PROVIDER",
+        )
+    )
+    tx.flush()
+    audit.record(
+        tx,
+        "invoice.payment_recorded",
+        object_type="case",
+        object_id=case.id,
+        data={"payment_record_id": record.id, "intent_id": details["intent_id"]},
+        simulated=details["mode"] == "SIMULATED",
+    )
+
+
+sources.register_settlement("invoices", record_settlement)

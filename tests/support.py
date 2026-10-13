@@ -171,7 +171,7 @@ def request_approval(world, proposal, persona="operator"):
     resp = world.acme_as(persona).post(
         "/v1/approval-requests", json={"proposal_id": proposal["id"]}
     )
-    assert resp.status_code == 201, resp.text
+    assert resp.status_code == 201, (resp.text, proposal.get("preflight"))
     return resp.json()
 
 
@@ -190,3 +190,29 @@ def approved_proposal(world, runtime, **invoice_kwargs):
     resp = decide(world, request)
     assert resp.status_code == 201, resp.text
     return detail, proposal, resp.json()
+
+
+def run_jobs(runtime, *job_types):
+    """Run only the given job types (to stop a workflow between steps)."""
+    from backend.persistence import jobs
+    from backend.worker import dispatch_outbox, run_job
+
+    count = 0
+    dispatch_outbox(runtime)
+    while (job := jobs.claim(runtime.db, job_types=list(job_types))) is not None:
+        run_job(runtime, job)
+        count += 1
+    return count
+
+
+def create_intent(world, proposal, request, persona="operator"):
+    resp = world.acme_as(persona).post(
+        "/v1/action-intents",
+        json={"proposal_id": proposal["id"], "approval_request_id": request["id"]},
+    )
+    assert resp.status_code == 202, resp.text
+    return resp.json()
+
+
+def intent_state(world, intent):
+    return world.acme_as("operator").get(f"/v1/action-intents/{intent['id']}").json()

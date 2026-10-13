@@ -177,15 +177,20 @@ def _mark_dependent_cases_stale(tx: TenantSession, vendor_id: uuid.UUID, reason:
         )
         .where(
             Invoice.vendor_id == vendor_id,
-            Case.status.in_([CaseStatus.IN_REVIEW, CaseStatus.READY_FOR_ACTION]),
+            Case.status.in_(
+                [CaseStatus.IN_REVIEW, CaseStatus.READY_FOR_ACTION, CaseStatus.ACTION_PENDING]
+            ),
         )
     ).scalars()
     for case in rows:
         hooks.notify_inputs_changed(tx, case, reason)
         if case.status == CaseStatus.READY_FOR_ACTION:
             cases.transition(tx, case, CaseStatus.IN_REVIEW, reason=reason)
-        cases.transition(tx, case, CaseStatus.READY_TO_EVALUATE, reason=reason)
-        jobs.emit(tx, "case.inputs_changed", aggregate_id=case.id, aggregate_revision=case.revision)
+        if case.status == CaseStatus.IN_REVIEW:
+            cases.transition(tx, case, CaseStatus.READY_TO_EVALUATE, reason=reason)
+            jobs.emit(
+                tx, "case.inputs_changed", aggregate_id=case.id, aggregate_revision=case.revision
+            )
 
 
 def import_payment_history(

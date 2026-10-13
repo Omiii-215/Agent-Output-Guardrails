@@ -45,3 +45,20 @@ def facts_for(tx: TenantSession, case: Case) -> PaymentFacts:
             f"Module '{case.module}' cannot propose payments", code="ACTIONS_UNSUPPORTED"
         )
     return source(tx, case)
+
+
+# Called inside the transaction that records an authoritative settlement, so the
+# workflow module can link the outcome (e.g. add paid-invoice history).
+OutcomeHook = Callable[[TenantSession, Case, dict[str, Any]], None]
+
+_OUTCOME_HOOKS: dict[str, OutcomeHook] = {}
+
+
+def register_settlement(module: str, hook: OutcomeHook) -> None:
+    _OUTCOME_HOOKS[module] = hook
+
+
+def on_settled(tx: TenantSession, case: Case, details: dict[str, Any]) -> None:
+    hook = _OUTCOME_HOOKS.get(case.module)
+    if hook is not None:
+        hook(tx, case, details)

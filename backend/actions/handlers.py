@@ -59,6 +59,8 @@ def proposal_view(tx: TenantSession, p: ActionProposal) -> dict[str, Any]:
                 "effect": v.finding.effect,
                 "reason_code": v.finding.reason_code,
                 "message": v.finding.message,
+                "observed": v.finding.observed,
+                "expected": v.finding.expected,
             }
             for v in policies.findings_for(tx, evaluation.id)
         ]
