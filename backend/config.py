@@ -24,6 +24,8 @@ class Settings(BaseSettings):
 
     env: Environment = "development"
     database_url: str = "sqlite:///var/finguard.sqlite3"
+    # Owner credentials for migrations/seeding; the runtime URL must not own tables.
+    database_admin_url: str | None = None
     object_store_path: Path = Path("var/objects")
 
     # Identity
