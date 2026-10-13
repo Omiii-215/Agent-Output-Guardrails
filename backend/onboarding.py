@@ -9,6 +9,7 @@ from __future__ import annotations
 import uuid
 
 from backend import bootstrap
+from backend.actions.templates import PAYMENT_PREFLIGHT
 from backend.identity.actor import system_actor
 from backend.identity.models import Organization
 from backend.modules.invoices.templates import INVOICE_PREFLIGHT
@@ -16,7 +17,7 @@ from backend.persistence.database import Database
 from backend.policies import service as policies
 from backend.policies.models import PolicyLifecycle, PolicyVersion
 
-TEMPLATES = (INVOICE_PREFLIGHT,)
+TEMPLATES = (INVOICE_PREFLIGHT, PAYMENT_PREFLIGHT)
 
 
 def install_default_policies(db: Database, organization_id: uuid.UUID) -> None:

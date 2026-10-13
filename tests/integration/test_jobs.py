@@ -216,9 +216,10 @@ def test_operations_api_is_scoped_and_retries_dead_jobs(world, db, runtime):
         jobs.enqueue(tx, "test.record")
     run_once(runtime)
     admin = world.acme_as("admin")
-    listed = admin.get("/v1/operations/jobs").json()
+    listed = admin.get("/v1/operations/jobs", params={"state": "DEAD"}).json()
     assert [j["id"] for j in listed] == [str(job_id)]
-    assert listed[0]["state"] == "DEAD"
+    everything = admin.get("/v1/operations/jobs").json()
+    assert all(j["job_type"] != "test.record" for j in everything)  # Globex's job is hidden
     retried = admin.post(f"/v1/operations/jobs/{job_id}/retry")
     assert retried.json()["state"] == "READY"
     assert world.globex_as("admin").post(f"/v1/operations/jobs/{job_id}/retry").status_code == 404

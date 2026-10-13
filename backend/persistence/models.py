@@ -1,5 +1,6 @@
 """Import every model module so ``Base.metadata`` is complete (Alembic, tests)."""
 
+from backend.actions import models as action_models  # noqa: F401
 from backend.ai import explanations  # noqa: F401
 from backend.cases import models as case_models  # noqa: F401
 from backend.evidence import models as evidence_models  # noqa: F401

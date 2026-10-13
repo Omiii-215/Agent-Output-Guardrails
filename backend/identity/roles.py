@@ -31,6 +31,7 @@ class Capability(StrEnum):
     APPROVAL_REQUEST = "approval.request"
     APPROVAL_DECIDE = "approval.decide"
     INTENT_CREATE = "intent.create"
+    ACTION_HALT = "action.halt"
     RECON_IMPORT = "reconciliation.import"
     RECON_MATCH_APPROVE = "reconciliation.match_approve"
     POLICY_AUTHOR = "policy.author"
@@ -42,7 +43,9 @@ class Capability(StrEnum):
 
 
 ROLE_CAPABILITIES: dict[Role, frozenset[Capability]] = {
-    Role.ORG_ADMIN: frozenset({Capability.MEMBER_MANAGE, Capability.OPERATIONS_READ}),
+    Role.ORG_ADMIN: frozenset(
+        {Capability.MEMBER_MANAGE, Capability.OPERATIONS_READ, Capability.ACTION_HALT}
+    ),
     Role.POLICY_AUTHOR: frozenset({Capability.POLICY_AUTHOR, Capability.CASE_READ}),
     Role.POLICY_PUBLISHER: frozenset({Capability.POLICY_PUBLISH, Capability.CASE_READ}),
     Role.FINANCE_OPERATOR: frozenset(
@@ -66,6 +69,7 @@ ROLE_CAPABILITIES: dict[Role, frozenset[Capability]] = {
             Capability.FINDING_RESOLVE,
             Capability.BENEFICIARY_VERIFY,
             Capability.APPROVAL_DECIDE,
+            Capability.ACTION_HALT,
             Capability.RECON_MATCH_APPROVE,
             Capability.AUDIT_READ,
             Capability.AUDIT_EXPORT,

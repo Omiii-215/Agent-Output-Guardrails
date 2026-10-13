@@ -11,6 +11,10 @@ _MODULES = (
     "backend.modules.invoices.handlers",
     "backend.modules.invoices.extraction",
     "backend.ai.explanations",
+    "backend.actions.rules",
+    "backend.actions.proposals",
+    "backend.actions.handlers",
+    "backend.modules.invoices.action_source",
 )
 
 

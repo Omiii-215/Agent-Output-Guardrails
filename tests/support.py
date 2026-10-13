@@ -128,3 +128,40 @@ def evaluate(world, runtime, case_id):
     assert resp.status_code == 202, resp.text
     run_once(runtime)
     return case_detail(world, case_id)
+
+
+def reviewed_case(world, runtime, **invoice_kwargs):
+    """A clean invoice evaluated to PASS, ready for a payment proposal."""
+    vendor_id, _ = make_vendor(world, name=invoice_kwargs.pop("vendor_name", "Shree Ganesh Metals"))
+    created = make_invoice(world, vendor_id, **invoice_kwargs)
+    detail = evaluate(world, runtime, created["case_id"])
+    assert detail["evaluation"]["outcome"] == "PASS", detail["findings"]
+    return detail
+
+
+def proposal_body(detail, **overrides):
+    body = {
+        "case_id": detail["case"]["id"],
+        "expected_case_revision": detail["case"]["revision"],
+        "action_type": "PAYMENT",
+        "amount": {
+            "amount_minor": detail["invoice"]["total"]["amount_minor"],
+            "currency": detail["invoice"]["total"]["currency"],
+        },
+        "beneficiary_version_id": detail["beneficiary"]["id"],
+        "purpose": f"Payment of invoice {detail['invoice']['number']}",
+        "mode": "SIMULATED",
+    }
+    body.update(overrides)
+    return body
+
+
+def propose(world, runtime, detail, persona="operator", **overrides):
+    from backend.worker import run_once
+
+    resp = world.acme_as(persona).post(
+        "/v1/action-proposals", json=proposal_body(detail, **overrides)
+    )
+    assert resp.status_code == 201, resp.text
+    run_once(runtime)
+    return world.acme_as(persona).get(f"/v1/action-proposals/{resp.json()['id']}").json()

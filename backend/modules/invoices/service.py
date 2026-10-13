@@ -11,6 +11,7 @@ from typing import Any
 from sqlalchemy import and_, select
 
 from backend.adapters.crypto import FieldCipher
+from backend.cases import hooks
 from backend.cases import service as cases
 from backend.cases.models import Case, CaseStatus
 from backend.domain.clock import utcnow
@@ -180,6 +181,7 @@ def _mark_dependent_cases_stale(tx: TenantSession, vendor_id: uuid.UUID, reason:
         )
     ).scalars()
     for case in rows:
+        hooks.notify_inputs_changed(tx, case, reason)
         if case.status == CaseStatus.READY_FOR_ACTION:
             cases.transition(tx, case, CaseStatus.IN_REVIEW, reason=reason)
         cases.transition(tx, case, CaseStatus.READY_TO_EVALUATE, reason=reason)
@@ -516,6 +518,7 @@ def correct_invoice(
 def _after_input_change(
     tx: TenantSession, case: Case, version: InvoiceVersion, reason: str
 ) -> None:
+    hooks.notify_inputs_changed(tx, case, reason)
     if case.status == CaseStatus.READY_FOR_ACTION:
         cases.transition(tx, case, CaseStatus.IN_REVIEW, reason=reason)
     target = (

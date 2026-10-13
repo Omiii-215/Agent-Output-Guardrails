@@ -203,7 +203,7 @@ def test_policies_are_tenant_isolated(world):
     published = _publish(world)
     assert world.globex_as("operator").get(f"/v1/policies/{published['id']}").status_code == 404
     codes = {p["policy_code"] for p in world.globex_as("operator").get("/v1/policies").json()}
-    assert codes == {"invoice-preflight"}  # only Globex's own template
+    assert codes == {"invoice-preflight", "payment-preflight"}  # only Globex's templates
 
 
 def test_no_active_policy_is_a_conflict(db, world):
