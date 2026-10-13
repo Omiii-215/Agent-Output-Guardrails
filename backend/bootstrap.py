@@ -18,6 +18,7 @@ _MODULES = (
     "backend.actions.execution",
     "backend.actions.execution_handlers",
     "backend.modules.invoices.action_source",
+    "backend.modules.reconciliation.handlers",
 )
 
 

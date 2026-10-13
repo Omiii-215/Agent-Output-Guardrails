@@ -19,6 +19,7 @@ from apps.api.routes import (
     invoices,
     operations,
     policies,
+    reconciliation,
 )
 from backend import bootstrap
 from backend.adapters.oidc.verifier import OidcVerifier
@@ -45,6 +46,7 @@ ROUTERS = (
     invoices.router,
     actions.router,
     approvals.router,
+    reconciliation.router,
     operations.router,
 )
 

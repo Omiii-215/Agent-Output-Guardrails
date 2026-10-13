@@ -216,3 +216,22 @@ def create_intent(world, proposal, request, persona="operator"):
 
 def intent_state(world, intent):
     return world.acme_as("operator").get(f"/v1/action-intents/{intent['id']}").json()
+
+
+def upload_bytes(world, data, *, media_type="text/csv", filename="file.csv"):
+    import hashlib
+
+    operator = world.acme_as("operator")
+    created = operator.post(
+        "/v1/uploads",
+        json={
+            "filename": filename,
+            "media_type": media_type,
+            "size": len(data),
+            "declared_sha256": "sha256:" + hashlib.sha256(data).hexdigest(),
+        },
+    ).json()
+    world.api.client.put(created["upload_url"], content=data)
+    done = operator.post(f"/v1/uploads/{created['document_version_id']}/complete").json()
+    assert done["status"] == "CLEAN", done
+    return created["document_version_id"]
