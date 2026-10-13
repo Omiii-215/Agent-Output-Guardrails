@@ -24,7 +24,8 @@ from backend.adapters.models.base import (
 # reviewable; nothing in the document is ever executed or obeyed.
 _INJECTION_PATTERNS = (
     re.compile(
-        r"ignore\s+(all\s+|any\s+|the\s+|previous\s+|prior\s+)*(instructions|rules|polic)", re.I
+        r"(ignore|disregard|override)\s+(?:\w+\s+){0,3}(instructions|rules|polic\w*|approvals?|checks?)",
+        re.I,
     ),
     re.compile(r"(approve|release|pay)\s+(this|immediately|without)", re.I),
     re.compile(r"(bypass|skip|disable)\s+(the\s+)?(approval|review|check|verification)", re.I),

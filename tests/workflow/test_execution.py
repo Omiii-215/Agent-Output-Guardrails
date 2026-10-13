@@ -25,7 +25,7 @@ def transfers(db):
 
 
 def settle(world, intent, state="SETTLED"):
-    resp = world.acme_as("admin").post(
+    resp = world.acme_as("operator").post(
         f"/v1/simulator/intents/{intent['id']}/advance", json={"state": state}
     )
     assert resp.status_code == 200, resp.text

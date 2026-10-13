@@ -215,7 +215,7 @@ async def simulator_webhook(request: Request, rt: Runtime = Depends(get_runtime)
 def advance_simulated_transfer(
     intent_id: uuid.UUID,
     body: AdvanceIn,
-    actor: Actor = Depends(require(Capability.OPERATIONS_READ)),
+    actor: Actor = Depends(require(Capability.CASE_READ)),
     rt: Runtime = Depends(get_runtime),
 ):
     """Development console: make the simulated provider settle/fail/reverse a transfer

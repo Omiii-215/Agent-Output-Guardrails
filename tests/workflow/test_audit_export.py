@@ -14,7 +14,7 @@ def full_flow(world, runtime):
     detail, proposal, request = approved_proposal(world, runtime)
     intent = create_intent(world, proposal, request)
     run_once(runtime)
-    world.acme_as("admin").post(
+    world.acme_as("operator").post(
         f"/v1/simulator/intents/{intent['id']}/advance", json={"state": "SETTLED"}
     )
     run_once(runtime)
