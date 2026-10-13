@@ -11,16 +11,20 @@ from __future__ import annotations
 import os
 import uuid
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import text
 
+from apps.api.main import create_app
+from backend.config import Settings
 from backend.identity.models import Organization
 from backend.persistence.database import Database
 from backend.persistence.embedded import PostgresUrls, create_database, migrate
 from backend.persistence.models import metadata
-from tests.support import BACKEND
+from tests.support import BACKEND, ApiClient, add_member
 
 
 @pytest.fixture(scope="session")
@@ -61,3 +65,37 @@ def make_org(db: Database, name: str) -> uuid.UUID:
 def two_orgs(db: Database) -> tuple[uuid.UUID, uuid.UUID]:
     """At least two synthetic organizations for every isolation test."""
     return make_org(db, "Acme Distributors"), make_org(db, "Globex Wholesale")
+
+
+@dataclass
+class World:
+    """Two synthetic organizations with distinct personas."""
+
+    acme: uuid.UUID
+    globex: uuid.UUID
+    api: ApiClient
+
+    def acme_as(self, persona: str):
+        return self.api.as_(f"{persona}@acme.test", self.acme)
+
+    def globex_as(self, persona: str):
+        return self.api.as_(f"{persona}@globex.test", self.globex)
+
+
+@pytest.fixture
+def app(db: Database):
+    return create_app(Settings(env="test"), db=db)
+
+
+@pytest.fixture
+def world(db: Database, two_orgs, app) -> World:
+    acme, globex = two_orgs
+    for org, domain in ((acme, "acme.test"), (globex, "globex.test")):
+        add_member(db, org, f"admin@{domain}", ["org_admin"])
+        add_member(db, org, f"operator@{domain}", ["finance_operator"])
+        add_member(db, org, f"approver@{domain}", ["finance_approver"], limit_minor=10_000_000_00)
+        add_member(db, org, f"approver2@{domain}", ["finance_approver"], limit_minor=50_000_00)
+        add_member(db, org, f"auditor@{domain}", ["auditor"])
+        add_member(db, org, f"author@{domain}", ["policy_author"])
+        add_member(db, org, f"publisher@{domain}", ["policy_publisher"])
+    return World(acme=acme, globex=globex, api=ApiClient(TestClient(app)))
