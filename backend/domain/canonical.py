@@ -60,6 +60,11 @@ def _normalise(value: Any) -> Any:
     raise CanonicalizationError(f"Unsupported type {type(value).__name__}")
 
 
+def to_jsonable(value: Any) -> Any:
+    """JSON-safe form used for stored payloads (same rules as the canonical form)."""
+    return _normalise(value)
+
+
 def canonical_json(value: Any) -> bytes:
     return json.dumps(
         _normalise(value),

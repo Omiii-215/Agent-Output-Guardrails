@@ -15,7 +15,7 @@ from typing import Any
 from sqlalchemy import Index, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.domain.canonical import digest
+from backend.domain.canonical import digest, to_jsonable
 from backend.domain.clock import utcnow
 from backend.persistence.base import Base, TenantMixin
 from backend.persistence.database import TenantSession
@@ -61,7 +61,7 @@ def record(
     actor: Any = None,
 ) -> AuditEvent:
     actor_type, actor_id = _actor_fields(actor if actor is not None else db.actor)
-    payload = data or {}
+    payload = to_jsonable(data or {})
     event = AuditEvent(
         actor_type=actor_type,
         actor_id=actor_id,

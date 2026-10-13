@@ -83,8 +83,8 @@ class World:
 
 
 @pytest.fixture
-def app(db: Database):
-    return create_app(Settings(env="test"), db=db)
+def app(db: Database, tmp_path: Path):
+    return create_app(Settings(env="test", object_store_path=tmp_path / "objects"), db=db)
 
 
 @pytest.fixture

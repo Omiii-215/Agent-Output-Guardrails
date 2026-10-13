@@ -33,7 +33,9 @@ class Settings(BaseSettings):
     oidc_issuer: str | None = None
     oidc_audience: str | None = None
 
-    # Uploads
+    # Uploads and object grants
+    object_grant_secret: str = "dev-object-grant-secret"
+    object_grant_ttl_seconds: int = Field(default=300, gt=0, le=3600)
     max_upload_bytes: int = Field(default=10 * 1024 * 1024, gt=0)
     allowed_media_types: tuple[str, ...] = (
         "application/pdf",
@@ -67,8 +69,10 @@ class Settings(BaseSettings):
                 "The development identity stub cannot be enabled in "
                 f"'{self.env}'. Configure OIDC instead."
             )
-        if self.env == "production" and self.simulator_webhook_secret == "dev-simulator-secret":
-            raise ValueError("Set FINGUARD_SIMULATOR_WEBHOOK_SECRET in production.")
+        if self.env in ("staging", "production"):
+            for name in ("simulator_webhook_secret", "object_grant_secret"):
+                if getattr(self, name).startswith("dev-"):
+                    raise ValueError(f"Set FINGUARD_{name.upper()} outside development.")
         return self
 
 

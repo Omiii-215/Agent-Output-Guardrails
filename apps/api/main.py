@@ -10,11 +10,12 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from apps.api.routes import identity
+from apps.api.routes import evidence, identity
 from backend.adapters.oidc.verifier import OidcVerifier
 from backend.config import Settings, get_settings
 from backend.errors import DomainError
 from backend.persistence.database import Database
+from backend.runtime import build_runtime
 from backend.telemetry.tracing import (
     configure_logging,
     current_trace_id,
@@ -26,7 +27,7 @@ from backend.telemetry.tracing import (
 API_VERSION = "v1"
 
 
-ROUTERS = (identity.router,)
+ROUTERS = (identity.router, evidence.router)
 
 
 def create_app(settings: Settings | None = None, db: Database | None = None) -> FastAPI:
@@ -39,7 +40,8 @@ def create_app(settings: Settings | None = None, db: Database | None = None) -> 
         description="Evidence and control platform for AI-assisted financial work.",
     )
     app.state.settings = settings
-    app.state.db = db or Database(settings.database_url)
+    app.state.runtime = build_runtime(settings, db)
+    app.state.db = app.state.runtime.db
     if settings.oidc_issuer and settings.oidc_audience:
         app.state.oidc_verifier = OidcVerifier(settings.oidc_issuer, settings.oidc_audience)
 

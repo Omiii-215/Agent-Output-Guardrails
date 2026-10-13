@@ -15,10 +15,15 @@ from backend.identity import service as identity
 from backend.identity.actor import Actor
 from backend.identity.roles import Capability
 from backend.persistence.database import Database, TenantSession
+from backend.runtime import Runtime
 
 
 def get_settings(request: Request) -> Settings:
     return request.app.state.settings
+
+
+def get_runtime(request: Request) -> Runtime:
+    return request.app.state.runtime
 
 
 def get_db(request: Request) -> Database:
