@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from backend.ai import explanations
 from backend.cases import detail
 from backend.cases.models import Case, CaseStatus
 from backend.domain.money import Money
@@ -145,7 +146,11 @@ def invoice_section(tx: TenantSession, case: Case) -> detail.DetailSection:
                 "input_digest": evaluation.input_digest,
                 "engine_version": evaluation.engine_version,
                 "coverage": evaluation.coverage,
-                "explanation": evaluation.explanation,
+                "explanation": (
+                    explanation.summary
+                    if (explanation := explanations.latest_for(tx, evaluation.id))
+                    else None
+                ),
                 "created_at": evaluation.created_at,
             }
             if evaluation

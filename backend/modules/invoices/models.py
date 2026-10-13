@@ -96,6 +96,7 @@ class InvoiceVersion(TenantMixin, TimestampMixin, Base):
     po_number: Mapped[str | None] = mapped_column(String(100))
     lines: Mapped[list[Any]] = mapped_column(default=list)
     field_status: Mapped[dict[str, Any]] = mapped_column(default=dict)
+    extraction_meta: Mapped[dict[str, Any]] = mapped_column(default=dict)
     source: Mapped[str] = mapped_column(String(20))  # MANUAL | EXTRACTED | CORRECTION
     reason: Mapped[str | None] = mapped_column(String(1000))
     created_by: Mapped[str] = mapped_column(String(200))

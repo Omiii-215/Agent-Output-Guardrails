@@ -48,6 +48,8 @@ class Settings(BaseSettings):
     # AI and providers
     model_provider: Literal["fake", "bedrock"] = "fake"
     bedrock_model_id: str | None = None
+    bedrock_guardrail_id: str | None = None
+    bedrock_guardrail_version: str | None = None
     bedrock_region: str = "ap-south-1"
     model_timeout_seconds: float = 30.0
     model_max_input_chars: int = 40_000

@@ -75,6 +75,7 @@ INVOICE_PREFLIGHT: dict[str, Any] = {
             "parameters": {"allowed": ["INR"]},
             "on_fail": "REVIEW",
         },
+        {"code": "document.untrusted_instructions", "version": 1, "on_fail": "REVIEW"},
         {
             "code": "invoice.po_reference",
             "version": 1,
@@ -101,6 +102,13 @@ INVOICE_PREFLIGHT: dict[str, Any] = {
             "name": "unverified payee is indeterminate",
             "inputs": _variant(beneficiary__verification_status="UNVERIFIED"),
             "expected_outcome": "INDETERMINATE",
+        },
+        {
+            "name": "embedded instructions need review",
+            "inputs": _variant(
+                document={"injection_flags": ["ignore the approval policy"]},
+            ),
+            "expected_outcome": "REVIEW",
         },
         {
             "name": "similar invoice needs review",

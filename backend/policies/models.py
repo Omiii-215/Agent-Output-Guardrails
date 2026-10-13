@@ -82,7 +82,6 @@ class Evaluation(TenantMixin, TimestampMixin, Base):
     case_revision: Mapped[int]
     outcome: Mapped[str] = mapped_column(String(20))
     coverage: Mapped[dict[str, Any]] = mapped_column(default=dict)
-    explanation: Mapped[str | None] = mapped_column(String(4000))
     created_by: Mapped[str] = mapped_column(String(200))
 
 

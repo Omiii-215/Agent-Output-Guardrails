@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from backend.adapters.crypto import FieldCipher
+from backend.adapters.models.base import ModelProvider
+from backend.adapters.models.fake import FakeModelProvider
 from backend.adapters.object_store.grants import GrantSigner
 from backend.adapters.object_store.store import LocalObjectStore, ObjectStore
 from backend.config import Settings
@@ -20,6 +22,7 @@ class Runtime:
     grants: GrantSigner
     scanner: Scanner
     cipher: FieldCipher
+    models: ModelProvider
 
 
 def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
@@ -30,4 +33,21 @@ def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
         grants=GrantSigner(settings.object_grant_secret, settings.object_grant_ttl_seconds),
         scanner=SignatureScanner(),
         cipher=FieldCipher(settings.field_encryption_key),
+        models=build_model_provider(settings),
     )
+
+
+def build_model_provider(settings: Settings) -> ModelProvider:
+    if settings.model_provider == "bedrock":
+        from backend.adapters.models.bedrock import BedrockModelProvider
+
+        if not settings.bedrock_model_id:
+            raise ValueError("FINGUARD_BEDROCK_MODEL_ID is required for the Bedrock provider")
+        return BedrockModelProvider(
+            settings.bedrock_model_id,
+            region=settings.bedrock_region,
+            guardrail_id=settings.bedrock_guardrail_id,
+            guardrail_version=settings.bedrock_guardrail_version,
+            timeout_seconds=settings.model_timeout_seconds,
+        )
+    return FakeModelProvider()

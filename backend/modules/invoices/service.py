@@ -237,7 +237,7 @@ class FieldInput:
     lines: list[dict[str, Any]] | None
 
 
-def _parse_fields(
+def parse_fields(
     values: dict[str, Any], currency_hint: str | None
 ) -> tuple[dict[str, Any], list[str]]:
     """Convert API field values into stored columns; return (columns, errors)."""
@@ -279,7 +279,7 @@ def _parse_fields(
     return out, errors
 
 
-def _parse_lines(lines: list[dict[str, Any]]) -> list[dict[str, str]]:
+def parse_lines(lines: list[dict[str, Any]]) -> list[dict[str, str]]:
     parsed = []
     for i, line in enumerate(lines, start=1):
         try:
@@ -297,7 +297,7 @@ def _parse_lines(lines: list[dict[str, Any]]) -> list[dict[str, str]]:
     return parsed
 
 
-def _field_value(version: InvoiceVersion, name: str) -> Any:
+def field_value(version: InvoiceVersion, name: str) -> Any:
     mapping = {
         "vendor": version.vendor_id,
         "invoice_number": version.number_raw,
@@ -313,7 +313,12 @@ def _field_value(version: InvoiceVersion, name: str) -> Any:
 
 
 def _critical_complete(version: InvoiceVersion) -> bool:
-    return all(_field_value(version, f) not in (None, "") for f in CRITICAL_FIELDS)
+    """Critical fields are present and none is an unconfirmed machine extraction."""
+    return all(
+        field_value(version, f) not in (None, "")
+        and version.field_status.get(f, {}).get("status") != "EXTRACTED"
+        for f in CRITICAL_FIELDS
+    )
 
 
 def create_invoice(
@@ -331,7 +336,7 @@ def create_invoice(
         require_clean(tx, document_version_id)
         if tx.first(tx.select(Invoice).where(Invoice.document_version_id == document_version_id)):
             raise Conflict("This document already has an invoice case", code="DOCUMENT_IN_USE")
-    columns, errors = _parse_fields(fields.values, None)
+    columns, errors = parse_fields(fields.values, None)
     if errors:
         raise InvalidInput("Invoice fields are invalid", code="INVALID_FIELDS", details=errors)
 
@@ -357,7 +362,7 @@ def create_invoice(
             version=1,
             vendor_id=vendor.id,
             beneficiary_version_id=vendor.current_beneficiary_id,
-            lines=_parse_lines(fields.lines or []),
+            lines=parse_lines(fields.lines or []),
             field_status=status,
             source="MANUAL",
             created_by=actor.subject,
@@ -408,6 +413,7 @@ def new_version(
     source: str,
     reason: str | None,
     created_by: str,
+    extraction_meta: dict[str, Any] | None = None,
 ) -> InvoiceVersion:
     base = current_version(tx, invoice)
     vendor = tx.get(Vendor, invoice.vendor_id)
@@ -434,6 +440,9 @@ def new_version(
             source=source,
             reason=reason,
             created_by=created_by,
+            extraction_meta=(
+                extraction_meta if extraction_meta is not None else dict(base.extraction_meta)
+            ),
             **data,
         )
     )
@@ -463,7 +472,7 @@ def correct_invoice(
     ):
         raise Conflict(f"Invoice cannot be corrected while {case.status}", code="CASE_LOCKED")
     base = current_version(tx, invoice)
-    columns, errors = _parse_fields(fields.values, base.currency)
+    columns, errors = parse_fields(fields.values, base.currency)
     bad_verify = set(verify) - set(FIELD_NAMES) - {"vendor"}
     if bad_verify:
         errors.append(f"Unknown fields to verify: {', '.join(sorted(bad_verify))}")
@@ -481,7 +490,7 @@ def correct_invoice(
         tx,
         invoice,
         columns=columns,
-        lines=_parse_lines(fields.lines) if fields.lines is not None else None,
+        lines=parse_lines(fields.lines) if fields.lines is not None else None,
         field_status=status,
         source="CORRECTION",
         reason=reason,
@@ -557,7 +566,7 @@ def build_inputs(tx: TenantSession, invoice: Invoice) -> tuple[dict[str, Any], d
     fields: dict[str, Any] = {}
     for name in ("vendor", *FIELD_NAMES):
         entry = version.field_status.get(name, {})
-        value = _field_value(version, name)
+        value = field_value(version, name)
         fields[name] = {
             "value": None if value is None else str(value),
             "status": entry.get("status", "MISSING"),
@@ -596,6 +605,15 @@ def build_inputs(tx: TenantSession, invoice: Invoice) -> tuple[dict[str, Any], d
             else None
         ),
         "duplicates": duplicates,
+        "document": (
+            {
+                "document_version_id": invoice.document_version_id,
+                "injection_flags": version.extraction_meta.get("injection_flags", []),
+                "extraction_warnings": version.extraction_meta.get("warnings", []),
+            }
+            if invoice.document_version_id
+            else None
+        ),
     }
     revisions = {
         "invoice_id": invoice.id,

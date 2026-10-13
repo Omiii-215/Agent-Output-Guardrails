@@ -7,7 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from backend.domain.outcomes import RuleResult, Severity
-from backend.policies.engine import RuleOutput, rule
+from backend.policies.engine import NoParams, RuleOutput, rule
 
 
 class RequiredFieldsParams(BaseModel):
@@ -52,3 +52,25 @@ def required_fields(inputs: dict[str, Any], params: RequiredFieldsParams) -> Rul
         "All required fields are present.",
         evidence_refs=tuple(refs),
     )
+
+
+@rule(
+    "document.untrusted_instructions",
+    version=1,
+    module="*",
+    title="Document contains no instructions aimed at reviewers or automation",
+)
+def untrusted_instructions(inputs: dict[str, Any], params: NoParams) -> RuleOutput:
+    document = inputs.get("document")
+    if not document:
+        return RuleOutput(RuleResult.NOT_APPLICABLE, "NO_DOCUMENT", "No source document.")
+    flags = document.get("injection_flags") or []
+    if flags:
+        return RuleOutput(
+            RuleResult.FAIL,
+            "UNTRUSTED_INSTRUCTIONS",
+            "The document contains text that tries to direct the review or payment. "
+            "It was treated as data and ignored; a reviewer should check the document.",
+            observed={"phrases": flags[:5]},
+        )
+    return RuleOutput(RuleResult.PASS, "NO_INSTRUCTIONS", "No embedded instructions found.")

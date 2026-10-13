@@ -9,6 +9,8 @@ _MODULES = (
     "backend.policies.rules_common",
     "backend.modules.invoices.rules",
     "backend.modules.invoices.handlers",
+    "backend.modules.invoices.extraction",
+    "backend.ai.explanations",
 )
 
 
