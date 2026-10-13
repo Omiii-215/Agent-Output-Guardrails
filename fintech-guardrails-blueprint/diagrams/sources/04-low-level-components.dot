@@ -1,0 +1,46 @@
+digraph G {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_entry {
+    label="Thin application entry points";
+    web [label="apps/web\nReviewer screens", fillcolor="#F0F3F7"];
+    api [label="apps/api\nValidate and route requests", fillcolor="#E7F4F0"];
+    worker [label="apps/worker\nClaim durable jobs", fillcolor="#E7F4F0"];
+  }
+
+  subgraph cluster_backend {
+    label="Shared backend business components";
+    identity [label="identity/\nMembership and authority", fillcolor="#E7F4F0"];
+    cases [label="cases/\nReview lifecycle", fillcolor="#E7F4F0"];
+    evidence [label="evidence/\nVersioned source references", fillcolor="#E7F4F0"];
+    policies [label="policies/\nSnapshots and rule results", fillcolor="#E7F4F0"];
+    modules [label="modules/\nSeven workflow evaluators", fillcolor="#E7F4F0"];
+    approvals [label="approvals/\nIndependent reviewer checks", fillcolor="#FFF0D6"];
+    actions [label="actions/ · M5 gateway\nFrozen proposal → intent\nPreflight and simulator", fillcolor="#E7F4F0"];
+    persistence [label="persistence/\nRepositories / transactions\nJobs and outbox", fillcolor="#F0F3F7"];
+    telemetry [label="telemetry/\nAudit interfaces / redaction", fillcolor="#F0F3F7"];
+  }
+
+  adapters [label="adapters/\nObjects • OIDC • OCR • AI\nPayment transport", fillcolor="#EEF0FC"];
+
+  web -> api [label="Typed requests"];
+  api -> identity [label="Authenticate / authorize"];
+  api -> cases [label="Review operations"];
+  api -> actions [label="Proposal / intent requests"];
+  api -> approvals [label="Approval decisions"];
+  worker -> policies [label="Evaluate queued work"];
+  worker -> actions [label="Execute eligible intent"];
+  cases -> evidence [label="Resolve source versions"];
+  policies -> modules [label="Run domain evaluators"];
+  policies -> evidence [label="Read frozen inputs"];
+  actions -> approvals [label="Verify proposal approvals"];
+  actions -> policies [label="Recheck controls"];
+  cases -> persistence [label="Save state"];
+  approvals -> persistence [label="Save decisions"];
+  actions -> persistence [label="Atomic intent / outbox"];
+  worker -> adapters [label="Bounded provider operations"];
+  actions -> telemetry [label="Record transition"];
+}

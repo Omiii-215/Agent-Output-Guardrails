@@ -1,0 +1,45 @@
+digraph G {
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_inputs {
+    label="1. Preserve source records";
+    imports [label="Import bank and ledger files\nAuthorized account and period", fillcolor="#E7F4F0"];
+    valid [shape=diamond, style=filled, label="Files and scope valid?\nTotals and mappings checked?", fillcolor="#FFF0D6"];
+    invalid [label="Hold invalid import\nExplain correction required", fillcolor="#FBE9E8"];
+    normalize [label="Normalize explicit mappings\nKeep original rows and signs\nExact amounts; no invented FX"];
+  }
+
+  subgraph cluster_matching {
+    label="2. Exact one-to-one scope";
+    candidate [shape=diamond, style=filled, label="Unique one-to-one candidate?\nExact amount and currency\nSuitable identity / reference", fillcolor="#E7F4F0"];
+    exception [label="Exception review\nSplit / partial / FX / fees\nAmbiguous or unmatched", fillcolor="#FFF0D6"];
+    compare [label="Inspect both source rows\nAnalyst proposes a match\nShow record consumption"];
+    reviewer [label="Authorized reviewer\nAccept or reject proposal", fillcolor="#FFF0D6"];
+  }
+
+  subgraph cluster_resolution {
+    label="3. Validate and record";
+    current [shape=diamond, style=filled, label="Versions still current?\nBoth rows still unconsumed?", fillcolor="#FFF0D6"];
+    conflict [label="Stale proposal or conflict\nRe-open and re-evaluate", fillcolor="#FBE9E8"];
+    record [label="Record accepted match\nConsume each row only once\nPreserve review history", fillcolor="#E7F4F0"];
+    report [label="Export reviewed conclusions\nUnresolved items stay visible\nNo journal posting", fillcolor="#E7F4F0"];
+  }
+
+  imports -> valid;
+  valid -> invalid [label="no"];
+  invalid -> imports [label="corrected import", constraint=false];
+  valid -> normalize [label="yes"];
+  normalize -> candidate;
+  candidate -> compare [label="yes"];
+  candidate -> exception [label="no / unsupported"];
+  exception -> normalize [label="new supported evidence", constraint=false];
+  exception -> report [label="retain unresolved status"];
+  compare -> reviewer;
+  reviewer -> exception [label="reject / investigate", constraint=false];
+  reviewer -> current [label="accept proposal"];
+  current -> conflict [label="no"];
+  conflict -> normalize [label="re-evaluate", constraint=false];
+  current -> record [label="yes"];
+  record -> report;
+}

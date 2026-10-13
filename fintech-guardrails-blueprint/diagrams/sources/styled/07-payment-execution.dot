@@ -1,0 +1,50 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 07</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Payment execution and recovery</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Simulation first; live connectors require a separate release gate</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_before {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="First release: simulated provider · approved proposal only";
+    created [label="CREATED\nApproved proposal copied", fillcolor="#E7F4F0"];
+    reserved [label="RESERVED\nAmount held against limit", fillcolor="#E7F4F0"];
+    submitting [label="SUBMITTING\nStable idempotency identity", fillcolor="#F0F3F7"];
+    invalidated [label="INVALIDATED\nNo submission claimed", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_outcomes {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Execution result is separate from approval";
+    accepted [label="ACCEPTED\nProvider confirms acceptance", fillcolor="#E7F4F0"];
+    unknown [label="UNKNOWN\nReservation remains held\nSame durable identity\nNo fresh transfer", fillcolor="#FFF0D6"];
+    failed [label="FAILED\nAuthoritative terminal failure", fillcolor="#FBE9E8"];
+    settled [label="SETTLED\nAuthoritative confirmation", fillcolor="#E7F4F0"];
+    reversed [label="REVERSED\nConfirmed reversal", fillcolor="#F0F3F7"];
+  }
+
+  created -> reserved [label="Atomic preflight + reservation"];
+  created -> invalidated [label="Approval / input stale"];
+  reserved -> invalidated [label="Recheck fails before claim"];
+  reserved -> submitting [label="Claim intent; submit once logically"];
+  submitting -> accepted [label="Acceptance confirmed"];
+  submitting -> failed [label="Terminal failure confirmed"];
+  submitting -> unknown [label="Timeout / response lost"];
+  unknown -> unknown [label="Status unresolved; hold remains"];
+  unknown -> accepted [label="Reconcile provider status"];
+  unknown -> failed [label="Confirm no successful action"];
+  accepted -> settled [label="Settlement confirmed"];
+  accepted -> failed [label="Terminal failure confirmed"];
+  settled -> reversed [label="Reversal confirmed"];
+}

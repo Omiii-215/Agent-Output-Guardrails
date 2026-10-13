@@ -1,0 +1,62 @@
+digraph G {
+  rankdir=TB;
+  newrank=true;
+  splines=spline;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_evidence {
+    label="1. Evidence and checks";
+    import [label="Import authorized invoice\nand supporting records", fillcolor="#E7F4F0"];
+    fields [label="Inspect fields beside sources\nVerify critical facts"];
+    correction [label="Correct fields or evidence\nCreate a new version\nPreserve original sources", fillcolor="#FFF0D6"];
+    checks [label="Run current policies\nAmounts, duplicates, vendor\nEvidence and authority", fillcolor="#E7F4F0"];
+    unknown [label="INDETERMINATE / incomplete\nObtain evidence or escalate\nDependent action stays held", fillcolor="#FBE9E8"];
+    blocked [label="BLOCK\nNo direct approval override\nCorrect cause and recheck", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_review {
+    label="2. Accountable review";
+    investigate [label="REVIEW finding\nAnalyst investigates\nPermitted resolution only", fillcolor="#FFF0D6"];
+    proposal [label="Server freezes proposal\nRun action preflight\nBind evidence and policy\nFailures stay held"];
+    reviewer [label="Independent approval\nReviewer checks authority\nNo self-approval", fillcolor="#FFF0D6"];
+    rejected [label="Reject or return proposal\nRecord reason", fillcolor="#FBE9E8"];
+    current [shape=diamond, style=filled, label="Approval current?\nPayload and versions match?", fillcolor="#FFF0D6"];
+    invalidated [label="Invalidate stale approval\nChanged facts or authority\nRe-evaluate and reapprove", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_outcome {
+    label="3. First-release outcomes";
+    simulator [label="Payment simulator\nNo money moves", fillcolor="#E7F4F0"];
+    report [label="Export reviewed history\nEvidence, actors and versions\nNo real payment or posting", fillcolor="#E7F4F0"];
+  }
+
+  { rank=same; correction; checks; investigate; }
+  correction -> checks -> investigate [style=invis, weight=100];
+  investigate -> proposal [style=invis, weight=20];
+  { rank=same; current; simulator; }
+  current -> simulator [style=invis, weight=100];
+  { rank=same; unknown; blocked; }
+  unknown -> blocked [style=invis, weight=100];
+
+  import -> fields;
+  fields -> correction [label="incorrect field"];
+  correction -> fields [label="new version"];
+  fields -> unknown [label="missing critical fact"];
+  fields -> checks [label="critical facts verified"];
+  checks -> unknown [label="required check incomplete"];
+  checks -> blocked [label="BLOCK"];
+  checks:e -> investigate:w [label="REVIEW", constraint=false];
+  checks:e -> proposal:w [label="PASS", constraint=false];
+  unknown -> correction [label="new evidence available", constraint=false];
+  blocked -> correction [label="verified correction", constraint=false];
+  investigate:s -> correction:s [label="source correction", constraint=false];
+  investigate:w -> checks:e [label="resolution version", constraint=false];
+  proposal -> reviewer [label="eligible action only"];
+  reviewer -> rejected [label="reject / return"];
+  reviewer -> current [label="approve exact proposal"];
+  current -> invalidated [label="no"];
+  invalidated:w -> checks:e [label="re-evaluate", constraint=false];
+  current:e -> report:w [label="yes: report only", constraint=false];
+  current:e -> simulator:w [label="yes: simulation requested", constraint=false];
+  simulator -> report [label="simulated receipt"];
+}

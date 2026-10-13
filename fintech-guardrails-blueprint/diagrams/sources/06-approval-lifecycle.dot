@@ -1,0 +1,39 @@
+digraph G {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_proposal {
+    label="Proposal exists before approval";
+    proposed [label="PROPOSED\nServer-frozen payload / digest", fillcolor="#E7F4F0"];
+    preflight [label="PREFLIGHT_PENDING\nExact proposal evaluated", fillcolor="#F0F3F7"];
+    review [label="NEEDS_REVIEW\nApproval unavailable", fillcolor="#FFF0D6"];
+    ready [label="READY_FOR_APPROVAL\nRequired findings resolved", fillcolor="#E7F4F0"];
+  }
+
+  subgraph cluster_approval {
+    label="Independent approval bound to proposal ID";
+    waiting [label="AWAITING_APPROVAL", fillcolor="#FFF0D6"];
+    approved [label="APPROVED\nRequired reviewers complete", fillcolor="#E7F4F0"];
+    rejected [label="REJECTED", fillcolor="#FBE9E8"];
+  }
+
+  stale [label="STALE\nExecution unavailable", fillcolor="#FBE9E8"];
+  superseded [label="SUPERSEDED\nReplacement proposal created", fillcolor="#F0F3F7"];
+  intent [label="INTENT_CREATED\nOnly after valid approvals", fillcolor="#E7F4F0"];
+
+  proposed -> preflight [label="Queue action checks"];
+  preflight -> ready [label="PASS / eligible"];
+  preflight -> review [label="REVIEW / BLOCK /\nINDETERMINATE"];
+  review -> ready [label="REVIEW resolution only\nNo BLOCK / INDETERMINATE"];
+  review -> stale [label="Required input / policy changes"];
+  ready -> waiting [label="Create approval request"];
+  waiting -> approved [label="Independent reviewers approve"];
+  waiting -> rejected [label="Reviewer rejects"];
+  waiting -> stale [label="Material change / expiry"];
+  approved -> stale [label="Material change / expiry"];
+  stale -> superseded [label="Create replacement proposal"];
+  approved -> intent [label="Create immutable execution intent"];
+  intent -> stale [label="Invalidated before submission"];
+}

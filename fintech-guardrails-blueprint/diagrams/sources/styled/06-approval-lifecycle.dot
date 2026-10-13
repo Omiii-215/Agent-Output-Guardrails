@@ -1,0 +1,52 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 06</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Approval lifecycle</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Approval binds an independent reviewer to an exact proposal</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_proposal {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Proposal exists before approval";
+    proposed [label="PROPOSED\nServer-frozen payload / digest", fillcolor="#E7F4F0"];
+    preflight [label="PREFLIGHT_PENDING\nExact proposal evaluated", fillcolor="#F0F3F7"];
+    review [label="NEEDS_REVIEW\nApproval unavailable", fillcolor="#FFF0D6"];
+    ready [label="READY_FOR_APPROVAL\nRequired findings resolved", fillcolor="#E7F4F0"];
+  }
+
+  subgraph cluster_approval {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Independent approval bound to proposal ID";
+    waiting [label="AWAITING_APPROVAL", fillcolor="#FFF0D6"];
+    approved [label="APPROVED\nRequired reviewers complete", fillcolor="#E7F4F0"];
+    rejected [label="REJECTED", fillcolor="#FBE9E8"];
+  }
+
+  stale [label="STALE\nExecution unavailable", fillcolor="#FBE9E8"];
+  superseded [label="SUPERSEDED\nReplacement proposal created", fillcolor="#F0F3F7"];
+  intent [label="INTENT_CREATED\nOnly after valid approvals", fillcolor="#E7F4F0"];
+
+  proposed -> preflight [label="Queue action checks"];
+  preflight -> ready [label="PASS / eligible"];
+  preflight -> review [label="REVIEW / BLOCK /\nINDETERMINATE"];
+  review -> ready [label="REVIEW resolution only\nNo BLOCK / INDETERMINATE"];
+  review -> stale [label="Required input / policy changes"];
+  ready -> waiting [label="Create approval request"];
+  waiting -> approved [label="Independent reviewers approve"];
+  waiting -> rejected [label="Reviewer rejects"];
+  waiting -> stale [label="Material change / expiry"];
+  approved -> stale [label="Material change / expiry"];
+  stale -> superseded [label="Create replacement proposal"];
+  approved -> intent [label="Create immutable execution intent"];
+  intent -> stale [label="Invalidated before submission"];
+}

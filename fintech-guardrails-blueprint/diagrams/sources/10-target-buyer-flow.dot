@@ -1,0 +1,48 @@
+digraph G {
+  rankdir=TB;
+  newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_fit {
+    label="1. Validate buyer and fit";
+    discovery [label="Discover a recurring problem\nCFO / controller sponsors\nStaff show real exceptions", fillcolor="#E7F4F0"];
+    demo [label="Demo with synthetic records\nInvoice + reconciliation\nPayment simulation only"];
+    evaluate [label="Evaluate workflow and data\nIT / security / procurement\nReview access and scope"];
+    ready [shape=diamond, style=filled, label="Sponsor and data ready?\nPilot prerequisites met?", fillcolor="#FFF0D6"];
+    defer [label="Document blocker\nDefer or decline fit", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_pilot {
+    label="2. Paid, scoped evaluation";
+    terms [label="Sign paid pilot agreement\nData terms and stop criteria\nBefore customer data use", fillcolor="#E7F4F0"];
+    pilot_setup [label="Set roles and baseline\nApprove mappings and policies\nAssign independent reviewer", fillcolor="#FFF0D6"];
+    pilot [label="Historical then shadow pilot\nMeasure effort and errors\nLog misses and false alarms"];
+    evidence [shape=diamond, style=filled, label="Evidence supports value?\nBuyer chooses continuation?", fillcolor="#FFF0D6"];
+    revise [label="Fix a bounded gap\nExtend only by agreement\nOr stop", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_retention {
+    label="3. Earn continued use";
+    contract [label="Subscription contract\nAgreed scope and support", fillcolor="#E7F4F0"];
+    onboarding [label="Operational onboarding\nRole separation and rehearsal\nAdvisory workflows only"];
+    outcomes [label="Measure sustained adoption\nQuality, effort and costs\nReview with buyer"];
+    renewal [shape=diamond, style=filled, label="Evidence supports renewal?\nAdjacent need validated?", fillcolor="#FFF0D6"];
+    continue_use [label="Renew useful core workflow\nOr evaluate one expansion\nSeparate module release gate", fillcolor="#E7F4F0"];
+    exit [label="Re-scope or end service\nAgreed export and retention", fillcolor="#FBE9E8"];
+  }
+
+  { rank=same; discovery; terms; contract; }
+  discovery -> terms -> contract [style=invis, weight=100];
+
+  discovery -> demo -> evaluate -> ready;
+  ready -> defer [label="no"];
+  ready:e -> terms:w [label="yes", constraint=false];
+  terms -> pilot_setup -> pilot -> evidence;
+  evidence -> revise [label="no"];
+  revise -> pilot [label="bounded extension agreed", constraint=false];
+  evidence:e -> contract:w [label="yes", constraint=false];
+  contract -> onboarding -> outcomes -> renewal;
+  renewal -> continue_use [label="supported buyer decision"];
+  renewal -> exit [label="not justified"];
+  continue_use -> outcomes [label="keep measuring", constraint=false];
+}

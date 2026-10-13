@@ -1,0 +1,65 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 11</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Supplier and consumer correction flow</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Requests pass through the customer organization&#x27;s authorized channel</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_indirect_party {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Indirect participant";
+    person [label="Supplier / applicant / client\nNo shipped consumer portal", fillcolor="#E7F4F0"];
+  }
+
+  subgraph cluster_customer {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Customer organization owns contact";
+    channel [label="Authorized customer channel\nProvide facts or seek review\nCustomer records authority"];
+    staff [label="Accountable staff review\nHuman owns proposed outcome", fillcolor="#FFF0D6"];
+    notice [label="Communicate outcome or reason\nThrough authorized channel\nProtect other parties' data"];
+    verify [shape=diamond, style=filled, label="Correction / appeal request\nIdentity and scope verified?", fillcolor="#FFF0D6"];
+    hold [label="Pause disclosure\nSeek appropriate verification", fillcolor="#FBE9E8"];
+    correction_review [label="Human correction / appeal\nInspect original and new facts\nRecord reasoned resolution", fillcolor="#FFF0D6"];
+  }
+
+  subgraph cluster_platform {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Platform supports evidence and history";
+    evidence [label="Authorized evidence records\nKeep original versions", fillcolor="#E7F4F0"];
+    checks [label="Check relevant evidence\nFlag uncertainty and gaps"];
+    revised [label="Create corrected version\nNever silently rewrite source", fillcolor="#E7F4F0"];
+    invalidate [label="Invalidate affected outputs\nRecheck stale recommendations\nReapprove where required", fillcolor="#FFF0D6"];
+    retention [label="Agreed retention and access\nControlled deletion process"];
+  }
+
+  { rank=same; person; channel; evidence; }
+  person -> channel -> evidence [style=invis, weight=100];
+  evidence -> revised [style=invis, weight=20];
+  correction_review -> staff [style=invis, weight=20];
+
+  person:e -> channel:w [label="information / correction / appeal", constraint=false];
+  channel:e -> evidence:w [label="authorized initial facts", constraint=false];
+  evidence -> checks;
+  checks:w -> staff:e [constraint=false];
+  staff -> notice;
+  notice:w -> person:e [label="approved communication", constraint=false];
+  channel -> verify [label="correction / appeal"];
+  verify -> hold [label="not yet"];
+  hold -> channel [label="verification request", constraint=false];
+  verify -> correction_review [label="yes"];
+  evidence:w -> correction_review:e [label="original record", style=dashed, constraint=false];
+  correction_review -> notice [label="outcome upheld; give reason"];
+  correction_review:e -> revised:w [label="correction warranted", constraint=false];
+  revised -> invalidate -> checks;
+  notice:e -> retention:w [label="follow agreed schedule", constraint=false];
+}

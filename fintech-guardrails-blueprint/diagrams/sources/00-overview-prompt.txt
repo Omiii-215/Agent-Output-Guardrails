@@ -1,0 +1,25 @@
+Use case: infographic-diagram
+Asset type: landscape overview diagram for an existing fintech product blueprint.
+Create a crisp, polished, professional 16:9 infographic with very legible English text. Light warm white background, deep navy typography, teal for the proposed solution, pale amber for review. Flat diagram style, generous whitespace, thin arrows, minimal line icons. No fake logos, no decorative charts, no extra text.
+Title exactly: "FinGuard: from evidence to controlled decisions"
+Subtitle exactly: "Proposed product • First release uses payment simulation"
+Three clearly separated large columns connected left to right:
+LEFT heading "THE PROBLEM" with three stacked cards reading exactly:
+"Scattered financial records"
+"Repeated manual review"
+"Unclear decision history"
+CENTER heading "SHARED CONTROL WORKFLOW" with a vertical chain of five boxes and arrows reading exactly:
+"Collect evidence"
+"Run explicit checks"
+"Review exceptions"
+"Approve an exact proposal"
+"Simulate and record"
+RIGHT heading "VALUE TO VALIDATE" with three stacked cards reading exactly:
+"Less review time"
+"Fewer material errors"
+"Traceable decisions"
+Bottom full-width strip heading "START SMALL" and text exactly:
+"Invoice checks + one-to-one reconciliation + simulated payment controls"
+Small footer exactly:
+"Later: AML evidence • Chargebacks • Underwriting evidence • Communication QA • KYC/KYB"
+Important: This is a diagram about a proposed product, not a screen mockup. All text must be accurate and easy to read. Do not imply live money movement, proven results or autonomous financial decisions.

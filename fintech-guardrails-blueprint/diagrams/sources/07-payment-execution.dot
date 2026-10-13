@@ -1,0 +1,37 @@
+digraph G {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_before {
+    label="First release: simulated provider · approved proposal only";
+    created [label="CREATED\nApproved proposal copied", fillcolor="#E7F4F0"];
+    reserved [label="RESERVED\nAmount held against limit", fillcolor="#E7F4F0"];
+    submitting [label="SUBMITTING\nStable idempotency identity", fillcolor="#F0F3F7"];
+    invalidated [label="INVALIDATED\nNo submission claimed", fillcolor="#FBE9E8"];
+  }
+
+  subgraph cluster_outcomes {
+    label="Execution result is separate from approval";
+    accepted [label="ACCEPTED\nProvider confirms acceptance", fillcolor="#E7F4F0"];
+    unknown [label="UNKNOWN\nReservation remains held\nSame durable identity\nNo fresh transfer", fillcolor="#FFF0D6"];
+    failed [label="FAILED\nAuthoritative terminal failure", fillcolor="#FBE9E8"];
+    settled [label="SETTLED\nAuthoritative confirmation", fillcolor="#E7F4F0"];
+    reversed [label="REVERSED\nConfirmed reversal", fillcolor="#F0F3F7"];
+  }
+
+  created -> reserved [label="Atomic preflight + reservation"];
+  created -> invalidated [label="Approval / input stale"];
+  reserved -> invalidated [label="Recheck fails before claim"];
+  reserved -> submitting [label="Claim intent; submit once logically"];
+  submitting -> accepted [label="Acceptance confirmed"];
+  submitting -> failed [label="Terminal failure confirmed"];
+  submitting -> unknown [label="Timeout / response lost"];
+  unknown -> unknown [label="Status unresolved; hold remains"];
+  unknown -> accepted [label="Reconcile provider status"];
+  unknown -> failed [label="Confirm no successful action"];
+  accepted -> settled [label="Settlement confirmed"];
+  accepted -> failed [label="Terminal failure confirmed"];
+  settled -> reversed [label="Reversal confirmed"];
+}

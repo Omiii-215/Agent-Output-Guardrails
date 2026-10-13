@@ -1,0 +1,81 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 15</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Eight modules, one shared platform</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Three first-release workflows; five separately validated expansions</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  newrank=true;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  request [label="One application\nAuthorized user or agent", fillcolor="#E7F4F0"];
+  route [label="Select relevant workflow\nCheck module entitlement\nNever run all eight by default"];
+
+  subgraph cluster_first_release {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="First-release workflow modules";
+    m1 [label="M1 Invoice preflight\nInvoice and vendor evidence", fillcolor="#E7F4F0"];
+    m2 [label="M2 Reconciliation\nExact one-to-one investigation", fillcolor="#E7F4F0"];
+  }
+
+  subgraph cluster_future {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Five future modules: disabled";
+    gate [label="Each module has its own gate\nBuyer, evidence and expertise\nValidation before activation", fillcolor="#EEF0FC"];
+    m3 [label="M3 AML evidence\nInvestigator-reviewed drafts", fillcolor="#EEF0FC"];
+    m4 [label="M4 Chargeback evidence\nReviewed response packets", fillcolor="#EEF0FC"];
+    m6 [label="M6 Underwriting evidence\nFile and policy validation", fillcolor="#EEF0FC"];
+    m7 [label="M7 Collections review\nFacts, policies and hardship", fillcolor="#EEF0FC"];
+    m8 [label="M8 KYC / KYB review\nVerification evidence", fillcolor="#EEF0FC"];
+  }
+
+  subgraph cluster_shared {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Common foundation and controlled actions";
+    foundation [label="Identity and source evidence\nPolicies, cases and audit\nEvaluation and operations", fillcolor="#E7F4F0"];
+    approval [label="Exact proposal approval\nIndependent human reviewer\nFirst-release requirement", fillcolor="#FFF0D6"];
+    m5 [label="M5 Payment control gateway\nRecheck scope and versions\nLimits and duplicate control", fillcolor="#E7F4F0"];
+    blocked [label="BLOCK / unknown / stale\nNo approval bypass", fillcolor="#FBE9E8"];
+    simulation [label="Payment simulator\nNo money moves\nLive integration gated later", fillcolor="#E7F4F0"];
+  }
+
+  { rank=same; m3; m4; m6; }
+  { rank=same; m7; m8; }
+  m3 -> m4 -> m6 [style=invis, weight=100];
+  m7 -> m8 [style=invis, weight=100];
+  m3 -> m7 [style=invis, weight=100];
+  m4 -> m8 [style=invis, weight=100];
+
+  request -> route;
+  route -> m1;
+  route -> m2;
+  route -> foundation [label="payment proposal"];
+  route -> gate [label="future workflow", style=dashed];
+  gate -> m3 [style=dashed];
+  gate -> m4 [style=dashed];
+  gate -> m6 [style=dashed];
+  gate -> m7 [style=dashed, constraint=false];
+  gate -> m8 [style=dashed, constraint=false];
+
+  m1:e -> foundation:e [label="shared controls"];
+  m2:e -> foundation:e;
+  m3:e -> foundation:w [style=dashed];
+  m4:e -> foundation:w [style=dashed];
+  m6:e -> foundation:w [style=dashed];
+  m7:e -> foundation:w [style=dashed];
+  m8:e -> foundation:w [style=dashed];
+
+  foundation -> approval [label="eligible action proposal"];
+  foundation -> blocked [label="mandatory check fails"];
+  approval -> m5 [label="approved exact proposal"];
+  m5 -> foundation [label="policy / audit data", style=dotted, constraint=false];
+  m5 -> blocked [label="invalid / incomplete"];
+  m5 -> simulation [label="valid and current"];
+}

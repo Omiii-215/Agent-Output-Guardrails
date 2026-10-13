@@ -1,0 +1,41 @@
+digraph G {
+  rankdir=LR;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_people {
+    label="Customer organization";
+    operators [label="Finance / compliance\noperators", fillcolor="#F0F3F7"];
+    approvers [label="Independent\napprovers", fillcolor="#FFF0D6"];
+    admins [label="Organization\nadministrators", fillcolor="#F0F3F7"];
+    auditors [label="Read-only\nauditors", fillcolor="#F0F3F7"];
+    { rank=same; operators; approvers; admins; auditors; }
+  }
+
+  app [label="Unified financial\ncontrols web app\nEvidence • rules • approvals", fillcolor="#E7F4F0"];
+  identity [label="Managed identity\nOIDC / Cognito", fillcolor="#F0F3F7"];
+
+  subgraph cluster_sources {
+    label="External systems and providers";
+    accounting [label="Accounting / ERP", fillcolor="#F0F3F7"];
+    statements [label="Bank / processor\nstatement sources", fillcolor="#F0F3F7"];
+    ai [label="OCR / AI providers\nBounded assistance", fillcolor="#EEF0FC"];
+    verification [label="Identity / screening\nproviders · later", fillcolor="#EEF0FC"];
+    payment [label="Live payment provider\nLater release", fillcolor="#EEF0FC"];
+    { rank=same; accounting; statements; ai; verification; payment; }
+  }
+
+  agent [label="External AI agent\nScoped requests · later", fillcolor="#EEF0FC"];
+  operators -> app [label="Submit and investigate"];
+  approvers -> app [label="Review exact proposals"];
+  admins -> app [label="Configure access / settings"];
+  auditors -> app [label="Inspect history"];
+  identity -> app [label="Verified identity"];
+  app -> accounting [dir=both, label="Records / approved exports"];
+  app -> statements [dir=back, label="Statements / settlements"];
+  app -> ai [dir=both, label="Bounded input / suggestions"];
+  app -> verification [dir=back, label="Verification evidence"];
+  agent -> app [label="Proposed actions"];
+  app -> payment [dir=both, label="Authorized requests / status\nLater release"];
+}

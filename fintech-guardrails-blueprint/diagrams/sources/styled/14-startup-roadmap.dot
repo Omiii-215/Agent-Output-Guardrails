@@ -1,0 +1,65 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 14</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>From project to startup</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Advance when customer evidence supports the next investment</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  nodesep=0.5;
+  ranksep=0.42;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  buyer [label="Initial market hypothesis\nIndia midsize B2B\ndistributors / wholesalers\nCFO / controller buyer", fillcolor="#E7F4F0", group="stage"];
+  promise [label="Value to test\nLess manual exception work\nEvidence + approvals retained\nAdvisory; simulated payments", fillcolor="#E7F4F0", group="gate"];
+  {rank=same; buyer; promise;}
+  buyer -> promise [style=dashed, arrowhead=none];
+
+  discovery [label="1 · Discover | Weeks 1–2\nObserve actual exceptions\nMap current tools + costs\nIdentify owner and data", fillcolor="#E7F4F0", group="stage"];
+  gate1 [label="GATE\nRecurring pain?\nBudget owner + usable data?\nDefined evaluation interest?", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; discovery; gate1;}
+  buyer -> discovery;
+  discovery -> gate1;
+
+  prototype [label="2 · Build | Weeks 3–12\nNarrow invoice + recon MVP\nReview historical examples\nProve control foundations", group="stage"];
+  gate2 [label="GATE\nUseful evidence?\nReliable controls?\nReviewer accepts scorecard?", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; prototype; gate2;}
+  gate1 -> prototype [label="yes", constraint=false];
+  prototype -> gate2;
+
+  paid [label="3 · Paid pilot | Months 4–6\nScoped 4–6 week evaluation\nHistorical then advisory use\nMeasure outcomes and cost", group="stage"];
+  gate3 [label="GATE\nQuality + staff value?\nCritical defects resolved?\nWillingness to continue paid?", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; paid; gate3;}
+  gate2 -> paid [label="yes", constraint=false];
+  paid -> gate3;
+
+  repeat [label="4 · Repeat | Months 5–8\nRenew successful pilots\nServe similar customers\nReuse onboarding + policies", group="stage"];
+  gate4 [label="GATE\nRepeatable setup?\nManageable support effort?\nViable contribution economics?", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; repeat; gate4;}
+  gate3 -> repeat [label="yes", constraint=false];
+  repeat -> gate4;
+
+  retention [label="5 · Retain | Months 8–10\nHarden operations + recovery\nImprove adoption + reliability\nTest repeatable distribution", group="stage"];
+  gate5 [label="GATE\nContinued customer use?\nSustainable service quality?\nFunded adjacent need?", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; retention; gate5;}
+  gate4 -> retention [label="yes", constraint=false];
+  retention -> gate5;
+
+  expansion [label="6 · Explore | Months 10–12\nEvaluate ONE adjacent module\nAdd domain experts + data\nProtect the core workflow", fillcolor="#EEF0FC", group="stage"];
+  gate6 [label="Independent activation gate\nBuyer + evidence + controls\nvalidated for the new domain\nOtherwise deepen the core", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; expansion; gate6;}
+  gate5 -> expansion [label="yes", constraint=false];
+  expansion -> gate6;
+
+  limits [label="Planning ranges, not forecasts\nBuild timing: two experienced\nbuilders; solo may take longer\nAdvance by evidence, not dates", fillcolor="#FFF0D6", group="stage"];
+  failure [label="At any failed gate:\nfix one bounded weakness,\nnarrow the offer or stop.\nEight modules are not promised.", fillcolor="#FFF0D6", group="gate"];
+  {rank=same; limits; failure;}
+  gate6 -> failure [style=dashed, arrowhead=none, weight=100];
+
+  // Keep each milestone and its gate in stable left / right columns.
+  discovery -> prototype -> paid -> repeat -> retention -> expansion -> limits [style=invis, weight=100];
+  promise -> gate1 -> gate2 -> gate3 -> gate4 -> gate5 -> gate6 [style=invis, weight=100];
+}

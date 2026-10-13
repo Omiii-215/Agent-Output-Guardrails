@@ -1,0 +1,60 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 09</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Reconciliation flow</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">First release supports exact one-to-one matching only</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_inputs {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="1. Preserve source records";
+    imports [label="Import bank and ledger files\nAuthorized account and period", fillcolor="#E7F4F0"];
+    valid [shape=diamond, style=filled, label="Files and scope valid?\nTotals and mappings checked?", fillcolor="#FFF0D6"];
+    invalid [label="Hold invalid import\nExplain correction required", fillcolor="#FBE9E8"];
+    normalize [label="Normalize explicit mappings\nKeep original rows and signs\nExact amounts; no invented FX"];
+  }
+
+  subgraph cluster_matching {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="2. Exact one-to-one scope";
+    candidate [shape=diamond, style=filled, label="Unique one-to-one candidate?\nExact amount and currency\nSuitable identity / reference", fillcolor="#E7F4F0"];
+    exception [label="Exception review\nSplit / partial / FX / fees\nAmbiguous or unmatched", fillcolor="#FFF0D6"];
+    compare [label="Inspect both source rows\nAnalyst proposes a match\nShow record consumption"];
+    reviewer [label="Authorized reviewer\nAccept or reject proposal", fillcolor="#FFF0D6"];
+  }
+
+  subgraph cluster_resolution {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="3. Validate and record";
+    current [shape=diamond, style=filled, label="Versions still current?\nBoth rows still unconsumed?", fillcolor="#FFF0D6"];
+    conflict [label="Stale proposal or conflict\nRe-open and re-evaluate", fillcolor="#FBE9E8"];
+    record [label="Record accepted match\nConsume each row only once\nPreserve review history", fillcolor="#E7F4F0"];
+    report [label="Export reviewed conclusions\nUnresolved items stay visible\nNo journal posting", fillcolor="#E7F4F0"];
+  }
+
+  imports -> valid;
+  valid -> invalid [label="no"];
+  invalid -> imports [label="corrected import", constraint=false];
+  valid -> normalize [label="yes"];
+  normalize -> candidate;
+  candidate -> compare [label="yes"];
+  candidate -> exception [label="no / unsupported"];
+  exception -> normalize [label="new supported evidence", constraint=false];
+  exception -> report [label="retain unresolved status"];
+  compare -> reviewer;
+  reviewer -> exception [label="reject / investigate", constraint=false];
+  reviewer -> current [label="accept proposal"];
+  current -> conflict [label="no"];
+  conflict -> normalize [label="re-evaluate", constraint=false];
+  current -> record [label="yes"];
+  record -> report;
+}

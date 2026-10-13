@@ -1,0 +1,107 @@
+[
+  {
+    "slug": "01-system-context",
+    "title": "System context",
+    "subtitle": "People, source systems and provider boundaries",
+    "source": "02-system-architecture.md",
+    "warnings": []
+  },
+  {
+    "slug": "02-system-architecture",
+    "title": "System architecture / high-level design",
+    "subtitle": "One modular application, an API and durable background workers",
+    "source": "02-system-architecture.md",
+    "warnings": []
+  },
+  {
+    "slug": "03-technology-stack",
+    "title": "Technology stack",
+    "subtitle": "Proposed development and pilot-hosting choices",
+    "source": "03-technology-stack.md",
+    "warnings": []
+  },
+  {
+    "slug": "04-low-level-components",
+    "title": "Low-level component design",
+    "subtitle": "Application services and their control boundaries",
+    "source": "04-low-level-design.md",
+    "warnings": []
+  },
+  {
+    "slug": "05-core-data-model",
+    "title": "Core data model",
+    "subtitle": "Simplified relationships; see the LLD for complete contracts",
+    "source": "04-low-level-design.md",
+    "warnings": []
+  },
+  {
+    "slug": "06-approval-lifecycle",
+    "title": "Approval lifecycle",
+    "subtitle": "Approval binds an independent reviewer to an exact proposal",
+    "source": "04-low-level-design.md",
+    "warnings": []
+  },
+  {
+    "slug": "07-payment-execution",
+    "title": "Payment execution and recovery",
+    "subtitle": "Simulation first; live connectors require a separate release gate",
+    "source": "04-low-level-design.md",
+    "warnings": []
+  },
+  {
+    "slug": "08-finance-user-flow",
+    "title": "Finance user flow",
+    "subtitle": "From an invoice to a reviewed, traceable simulation",
+    "source": "05-user-and-buyer-flows.md",
+    "warnings": []
+  },
+  {
+    "slug": "09-reconciliation-flow",
+    "title": "Reconciliation flow",
+    "subtitle": "First release supports exact one-to-one matching only",
+    "source": "05-user-and-buyer-flows.md",
+    "warnings": []
+  },
+  {
+    "slug": "10-target-buyer-flow",
+    "title": "Target buyer journey",
+    "subtitle": "CFO or controller buys; finance staff validate daily usefulness",
+    "source": "05-user-and-buyer-flows.md",
+    "warnings": []
+  },
+  {
+    "slug": "11-consumer-correction-flow",
+    "title": "Supplier and consumer correction flow",
+    "subtitle": "Requests pass through the customer organization's authorized channel",
+    "source": "05-user-and-buyer-flows.md",
+    "warnings": []
+  },
+  {
+    "slug": "12-competitive-positioning",
+    "title": "Competitive landscape and positioning",
+    "subtitle": "Known product overlap; proposed differentiation still needs evidence",
+    "source": "07-competition-and-positioning.md",
+    "warnings": []
+  },
+  {
+    "slug": "13-implementation-roadmap",
+    "title": "Implementation roadmap",
+    "subtitle": "12-16 weeks assumes two experienced builders and accessible data",
+    "source": "08-implementation-plan.md",
+    "warnings": []
+  },
+  {
+    "slug": "14-startup-roadmap",
+    "title": "From project to startup",
+    "subtitle": "Advance when customer evidence supports the next investment",
+    "source": "06-startup-roadmap.md",
+    "warnings": []
+  },
+  {
+    "slug": "15-eight-module-platform",
+    "title": "Eight modules, one shared platform",
+    "subtitle": "Three first-release workflows; five separately validated expansions",
+    "source": "01-product-and-problem.md",
+    "warnings": []
+  }
+]

@@ -1,0 +1,46 @@
+digraph G {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  browser [label="Browser\nNext.js / TypeScript", fillcolor="#F0F3F7"];
+  identity [label="Cognito\nOIDC identity", fillcolor="#F0F3F7"];
+  ingress [label="HTTPS ingress\nApplication Load Balancer", fillcolor="#F0F3F7"];
+
+  subgraph cluster_backend {
+    label="One backend codebase · separate API and worker processes";
+    api [label="FastAPI service\nValidate and authorize", fillcolor="#E7F4F0"];
+    core [label="Shared platform\nEvidence • policies • cases\nApprovals • audit\nM5 controlled actions", fillcolor="#E7F4F0"];
+    modules [label="Seven workflow modules\nInvoice / reconciliation first\nFive specialist modules later", fillcolor="#E7F4F0"];
+    worker [label="Durable workers\nExtract • evaluate • import\nExport • simulate actions", fillcolor="#E7F4F0"];
+    adapters [label="Scoped integration\nadapters", fillcolor="#F0F3F7"];
+  }
+
+  subgraph cluster_data {
+    label="Persistent state";
+    db [label="RDS PostgreSQL\nTenant records\nJobs and outbox", fillcolor="#E7F4F0", shape=cylinder];
+    storage [label="Private S3\nOriginals and exports", fillcolor="#F0F3F7", shape=cylinder];
+  }
+
+  ai [label="Bedrock / optional Textract\nBounded AI / OCR", fillcolor="#EEF0FC"];
+  external [label="ERP / specialist providers\nFake payment provider first\nLive actions disabled", fillcolor="#F0F3F7"];
+  telemetry [label="Metrics • traces • logs\nRedacted and monitored", fillcolor="#F0F3F7"];
+
+  browser -> identity [label="Sign in"];
+  browser -> ingress [label="HTTPS requests"];
+  ingress -> api [label="Route"];
+  api -> core [label="Application services"];
+  core -> modules [label="Domain rules"];
+  core -> db [label="Atomic state + jobs"];
+  modules -> db [label="Tenant-scoped data"];
+  worker -> db [label="Claim jobs; persist results"];
+  worker -> core [label="Shared services"];
+  api -> storage [label="Authorize upload / download"];
+  worker -> storage [label="Read evidence; write exports"];
+  worker -> ai [label="Bounded calls"];
+  worker -> adapters [label="Approved operations"];
+  adapters -> external [label="Scoped provider calls"];
+  api -> telemetry [label="Operational signals"];
+  worker -> telemetry [label="Operational signals"];
+}

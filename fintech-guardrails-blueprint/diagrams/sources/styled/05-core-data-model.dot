@@ -1,0 +1,56 @@
+digraph G {
+    graph [bgcolor="#FCFCFA", fontname="Helvetica", fontcolor="#142C41",
+           pad="0.45", nodesep="0.40", ranksep="0.65", splines=polyline,
+           labelloc=t, labeljust=l, label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#3F756A">FINGUARD / DESIGN BLUEPRINT / 05</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="28"><B>Core data model</B></FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="15" COLOR="#4D6071">Simplified relationships; see the LLD for complete contracts</FONT></TD></TR><TR><TD ALIGN="LEFT"><FONT POINT-SIZE="11" COLOR="#60717D">Proposed design | October 2026 | Not an implemented system</FONT></TD></TR><TR><TD HEIGHT="20"></TD></TR></TABLE>>];
+    node [shape=box, style="rounded,filled", fillcolor="#F0F3F7", color="#C9D4DC",
+          penwidth=1, fontname="Helvetica", fontcolor="#142C41", fontsize=15,
+          margin="0.20,0.14"];
+    edge [color="#60778A", penwidth=1.3, arrowsize=0.7, fontname="Helvetica",
+          fontcolor="#3B5366", fontsize=11];
+
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_tenant {
+    graph [style="rounded,filled", fillcolor="#F8FAFB", color="#D3DFE6", penwidth=1, margin=22, fontsize=14];
+
+    label="Tenant-scoped conceptual subset · cardinality shown on each edge";
+    org [label="Organization\nOne legal entity", fillcolor="#E7F4F0"];
+    case_record [label="Case\nTenant-owned workflow", fillcolor="#E7F4F0"];
+    snapshot [label="Input snapshot\nVersioned evidence references", fillcolor="#F0F3F7"];
+    policy [label="Published policy version", fillcolor="#F0F3F7"];
+    evaluation [label="Evaluation\nFrozen result / coverage", fillcolor="#E7F4F0"];
+    finding [label="Finding\nRule result and reason", fillcolor="#F0F3F7"];
+    finding_evidence [label="Finding evidence link", fillcolor="#F0F3F7"];
+    evidence [label="Evidence item\nSource / version / locator", fillcolor="#F0F3F7"];
+    proposal [label="Action proposal\nServer-frozen payload / digest", fillcolor="#E7F4F0"];
+    request [label="Approval request\nProposal + action evaluation", fillcolor="#FFF0D6"];
+    decision [label="Approval decision\nReviewer / reason / time", fillcolor="#FFF0D6"];
+    intent [label="Action intent\nAfter approvals only", fillcolor="#E7F4F0"];
+    attempt [label="Action attempt\nSame intent idempotency key", fillcolor="#F0F3F7"];
+    reservation [label="Spend reservation\nRetained while uncertain", fillcolor="#F0F3F7"];
+    { rank=same; snapshot; policy; proposal; }
+    { rank=same; finding; evidence; request; }
+    { rank=same; finding_evidence; decision; intent; }
+    { rank=same; attempt; reservation; }
+  }
+
+  org -> case_record [label="1 : 0..many"];
+  case_record -> evaluation [label="1 : 0..many"];
+  case_record -> proposal [label="1 : 0..many"];
+  snapshot -> evaluation [label="1 : 0..many"];
+  policy -> evaluation [label="1 : 0..many"];
+  evaluation -> finding [label="1 : 0..many"];
+  finding -> finding_evidence [label="1 : 0..many"];
+  evidence -> finding_evidence [label="1 : 0..many"];
+  proposal -> evaluation [label="0..1 : 0..many\nOptional only for non-actions"];
+  proposal -> request [label="1 : 0..many"];
+  evaluation -> request [label="1 : 0..many"];
+  request -> decision [label="1 : 0..many"];
+  request -> intent [label="1 : 0..1"];
+  proposal -> intent [label="1 : 0..1"];
+  intent -> attempt [label="1 : 0..many"];
+  intent -> reservation [label="1 : 0..many"];
+}

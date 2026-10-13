@@ -1,0 +1,43 @@
+digraph G {
+  rankdir=TB;
+  nodesep=0.35;
+  ranksep=0.52;
+  node [shape=box, style="rounded,filled", fillcolor="#F0F3F7"];
+
+  subgraph cluster_landscape {
+    label="Documented market overlap — 15 representative vendors";
+    color="#CBD5E1";
+    style="rounded";
+    ap [label="Invoice / payment review\nRazorpayX · Ramp · Tipalti\nReconciliation\nBlackLine"];
+    risk [label="AML: Unit21 · Sardine\nIdentity: Persona · Signzy\nCredit: Taktile · Perfios"];
+    commerce [label="Disputes: Chargeflow\nCollections: Skit.ai\nAgent payments: Visa\nIntelligent Commerce"];
+    governance [label="AI governance: Credo AI\nModel controls: Amazon\nBedrock Guardrails"];
+    {rank=same; ap; risk; commerce; governance;}
+    ap -> risk -> commerce -> governance [style=invis];
+  }
+
+  buyer [label="Initial buyer hypothesis\nIndia midsize B2B\ndistributors / wholesalers\nCFO / controller / AP team", fillcolor="#E7F4F0"];
+  finguard [label="FinGuard — unvalidated offer\nConnect exception evidence,\napproval and reconciliation\nacross existing systems", fillcolor="#E7F4F0", penwidth=1.8];
+  alternatives [label="Existing alternatives\nERP / AP suites · spreadsheets\nInternal rules · service teams"];
+  {rank=same; buyer; finguard; alternatives;}
+  buyer -> finguard [label="proposed fit"];
+  alternatives -> finguard [label="baseline to beat", style=dashed];
+  ap -> finguard [label="direct initial overlap"];
+  risk -> finguard [style=dashed, label="later overlap"];
+  commerce -> finguard [style=dashed];
+  governance -> finguard [style=dashed];
+
+  prove [label="Validate before claiming\na competitive advantage\nCompare the same cases\nand configured alternatives", fillcolor="#FFF0D6"];
+  finguard -> prove;
+  quality [label="Decision quality\nMisses + false holds\nEvidence / citation accuracy"];
+  effort [label="Operational value\nReviewer time + corrections\nSetup and support effort"];
+  economics [label="Commercial proof\nTotal operating cost\nPaid continuation + reuse"];
+  {rank=same; quality; effort; economics;}
+  prove -> quality;
+  prove -> effort;
+  prove -> economics;
+  caution [label="Candidate integrations are\nnot existing partnerships.\nNo superiority or market-share\nclaim is established.", fillcolor="#EEF0FC"];
+  quality -> caution [style=invis];
+  effort -> caution [style=dashed, arrowhead=none];
+  economics -> caution [style=invis];
+}

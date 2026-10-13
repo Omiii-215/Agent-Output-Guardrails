@@ -1,0 +1,56 @@
+digraph G {
+  rankdir=TB;
+  fontname="Helvetica";
+  node [fontname="Helvetica"];
+  edge [fontname="Helvetica"];
+
+  subgraph cluster_application {
+    label="Application code";
+    web [label="Next.js / React\nTypeScript / Tailwind\nAccessible review UI", fillcolor="#E7F4F0"];
+    api [label="Python / FastAPI\nPydantic / OpenAPI", fillcolor="#E7F4F0"];
+    workers [label="Python workers\nPostgreSQL jobs / outbox", fillcolor="#E7F4F0"];
+    rules [label="Versioned JSON rules\nPython evaluators / Decimal", fillcolor="#E7F4F0"];
+    { rank=same; web; api; workers; rules; }
+  }
+
+  subgraph cluster_managed {
+    label="Persistence and replaceable providers";
+    postgres [label="PostgreSQL / RDS\nSQLAlchemy / Alembic\nTransactions and tenant RLS", fillcolor="#F0F3F7", shape=cylinder];
+    objects [label="Private Amazon S3\nLocal adapter for development", fillcolor="#F0F3F7", shape=cylinder];
+    identity [label="OIDC / Cognito\nSign-in and MFA", fillcolor="#F0F3F7"];
+    ocr [label="pypdf / Tesseract\nOptional Textract", fillcolor="#EEF0FC"];
+    model [label="Amazon Bedrock\nPinned model adapter\nOptional content guardrails", fillcolor="#EEF0FC"];
+    { rank=same; postgres; objects; identity; }
+    { rank=same; ocr; model; }
+    // Invisible ordering edges express layout only, not system dependencies.
+    objects -> ocr [style=invis];
+    identity -> model [style=invis];
+  }
+
+  subgraph cluster_delivery {
+    label="Build, operate and verify";
+    tests [label="pytest / Hypothesis\nVitest / Playwright / axe", fillcolor="#F0F3F7"];
+    delivery [label="GitHub Actions\nTests / scans / reviewed build", fillcolor="#F0F3F7"];
+    runtime [label="Docker Compose locally\nECS Fargate / ECR in cloud", fillcolor="#F0F3F7"];
+    infra [label="Terraform\nReviewed environment plans", fillcolor="#F0F3F7"];
+    observe [label="OpenTelemetry / CloudWatch\nSecrets Manager / KMS", fillcolor="#F0F3F7"];
+    { rank=same; tests; delivery; infra; }
+    { rank=same; runtime; observe; }
+  }
+
+  web -> api [label="Generated API contracts"];
+  api -> identity [label="Validate identity"];
+  api -> rules [label="Validate financial actions"];
+  workers -> rules [label="Evaluate frozen inputs"];
+  api -> postgres [label="Persist business state"];
+  workers -> postgres [label="Durable processing"];
+  workers -> objects [label="Evidence / exports"];
+  workers -> ocr [label="Extract candidate fields"];
+  workers -> model [label="Bounded assistance"];
+  delivery -> tests [label="Run checks"];
+  delivery -> runtime [label="Deploy validated images"];
+  infra -> runtime [label="Provision configuration"];
+  runtime -> observe [label="Use operational services"];
+  // Keep the delivery group below the application/provider layers.
+  model -> delivery [style=invis, minlen=1];
+}

@@ -1,0 +1,21 @@
+# Architecture diagram source notes
+
+These DOT sources visualize the existing proposal. They do not assert a deployed application or verified performance. Root rendering adds titles and common styles. Use Helvetica and the specified color palette; the source files do not set a background, font size, or output resolution.
+
+| Source filename | Title | Subtitle | Blueprint sources | Simplifications |
+|---|---|---|---|---|
+| `01-system-context.dot` | System context | People, systems, and the shared control boundary | `02-system-architecture.md`, sections 1–2 | Providers grouped by purpose. Live payment and specialist verification integrations are explicitly later releases. Arrows show requested work or information flow, not deployment networking. |
+| `02-system-architecture.dot` | System architecture | A modular monolith with durable workers and a shared action gateway | `02-system-architecture.md`, sections 3–4 | The seven workflow modules are one group; M5 is shared actions. One backend codebase is deployed as API and worker processes. Network subnets, keys and IAM details remain in the source document. |
+| `03-technology-stack.dot` | Technology stack | A practical baseline for local development and an AWS pilot | `03-technology-stack.md`, sections 1–5 | Highlights the principal choices rather than every frontend helper. Arrows are labelled usage/deployment dependencies. The selected model, provider regions and production deployment remain validation gates. Operational services grouped for legibility. |
+| `04-low-level-components.dot` | Low-level components | Thin entry points call shared business services and replaceable adapters | `04-low-level-design.md`, section 1; `08-implementation-plan.md`, section 3 | Shows principal calls, not every import or persistence dependency. M5 is `backend/actions/`; payment adapters contain transport, not a duplicate execution authority. Audit interfaces are grouped under telemetry. |
+| `05-core-data-model.dot` | Core data model | Simplified conceptual subset: evidence, exact proposals, approvals and execution | `04-low-level-design.md`, sections 2–3 | Cardinality reads left-to-right on each arrow. Every shown tenant-owned record retains organization scope even where its organization edge is omitted. Optional proposal-to-evaluation relation distinguishes document evaluations from action evaluations. Reconciliation, membership, outbox, detailed document versions, audit and resolution tables are omitted for legibility. |
+| `06-approval-lifecycle.dot` | Proposal and approval lifecycle | Server-created proposal first; execution intent only after valid approvals | `04-low-level-design.md`, sections 5–8 | Nodes are workflow states; evaluation outcomes are edge conditions. `BLOCK` and `INDETERMINATE` never use the permitted-REVIEW-resolution transition. Missing/changed required evidence needs a new valid evaluation and, when material, a replacement proposal. A client-supplied digest is never authoritative. |
+| `07-payment-execution.dot` | Payment execution lifecycle | Simulated first release; uncertainty never becomes a fresh payment | `04-low-level-design.md`, sections 7–9 | Nodes are execution states; actions/conditions label edges. `UNKNOWN` retains the reservation and durable identity while status is reconciled. No retry edge creates a new transfer. An invalidated pre-submission intent releases its reservation only after confirming that no submission was claimed. Settlement/reversal states also describe the future provider contract. |
+
+## Scope retained across the diagrams
+
+- Invoice checks, one-to-one reconciliation, and simulated action controls form the first release.
+- Complex reconciliation cases are reviewed, not silently matched; the data-model subset does not suggest N-to-M matching is already available.
+- At least two synthetic organizations are used for isolation tests, with one legal entity per organization initially.
+- AI is bounded assistance. Financial checks, authority, proposal freezing, approval, and execution eligibility remain application responsibilities.
+- Labels on directed arrows specify their meaning. The stack diagram is a dependency view; the architecture diagram is an operational component view; state diagrams are transition views.
