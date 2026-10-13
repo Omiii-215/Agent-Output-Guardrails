@@ -1,0 +1,45 @@
+[project]
+name = "finguard"
+version = "0.1.0"
+description = "Evidence and control platform for AI-assisted financial work"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "sqlalchemy>=2.0.32",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.2",
+    "python-multipart>=0.0.9",
+    "pypdf>=5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "hypothesis>=6.100",
+    "httpx>=0.27",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+filterwarnings = ["ignore:Using `httpx` with `starlette.testclient`"]
+markers = [
+    "postgres: requires FINGUARD_TEST_DATABASE_URL pointing at PostgreSQL",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["fintech-guardrails-blueprint", "apps/web"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["RUF012", "B008"]
