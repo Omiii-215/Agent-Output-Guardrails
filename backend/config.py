@@ -52,6 +52,9 @@ class Settings(BaseSettings):
     model_timeout_seconds: float = 30.0
     model_max_input_chars: int = 40_000
 
+    # Field-level encryption for restricted data (beneficiary account numbers).
+    field_encryption_key: str = "dev-field-key-0123456789abcdef0123456789abcdef"
+
     # Payment simulator / webhooks
     simulator_webhook_secret: str = "dev-simulator-secret"
 
@@ -70,7 +73,7 @@ class Settings(BaseSettings):
                 f"'{self.env}'. Configure OIDC instead."
             )
         if self.env in ("staging", "production"):
-            for name in ("simulator_webhook_secret", "object_grant_secret"):
+            for name in ("simulator_webhook_secret", "object_grant_secret", "field_encryption_key"):
                 if getattr(self, name).startswith("dev-"):
                     raise ValueError(f"Set FINGUARD_{name.upper()} outside development.")
         return self

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from backend.adapters.crypto import FieldCipher
 from backend.adapters.object_store.grants import GrantSigner
 from backend.adapters.object_store.store import LocalObjectStore, ObjectStore
 from backend.config import Settings
@@ -18,6 +19,7 @@ class Runtime:
     objects: ObjectStore
     grants: GrantSigner
     scanner: Scanner
+    cipher: FieldCipher
 
 
 def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
@@ -27,4 +29,5 @@ def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
         objects=LocalObjectStore(settings.object_store_path),
         grants=GrantSigner(settings.object_grant_secret, settings.object_grant_ttl_seconds),
         scanner=SignatureScanner(),
+        cipher=FieldCipher(settings.field_encryption_key),
     )

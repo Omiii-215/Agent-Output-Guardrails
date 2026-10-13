@@ -45,10 +45,15 @@ def test_policy_lifecycle_requires_independent_publisher(world, db):
     assert first.json()["lifecycle"] == "PUBLISHED"
     second = _publish(world)
     assert second["version"] == 2
-    listed = {p["version"]: p["lifecycle"] for p in author.get("/v1/policies").json()}
+    listed = {
+        p["version"]: p["lifecycle"]
+        for p in author.get("/v1/policies").json()
+        if p["policy_code"] == "test-policy"
+    }
     assert listed == {1: "RETIRED", 2: "PUBLISHED"}
     with db.admin() as s:
-        assert s.query(OutboxEvent).filter_by(event_type="policy.published").count() == 2
+        events = s.query(OutboxEvent).filter_by(event_type="policy.published").all()
+        assert sum(e.data["policy_code"] == "test-policy" for e in events) == 2
 
 
 def test_same_person_with_both_roles_cannot_publish_own_policy(world, db, acme_operator):
@@ -197,7 +202,8 @@ def test_fabricated_evidence_references_are_not_cited(world, db, acme_operator):
 def test_policies_are_tenant_isolated(world):
     published = _publish(world)
     assert world.globex_as("operator").get(f"/v1/policies/{published['id']}").status_code == 404
-    assert world.globex_as("operator").get("/v1/policies").json() == []
+    codes = {p["policy_code"] for p in world.globex_as("operator").get("/v1/policies").json()}
+    assert codes == {"invoice-preflight"}  # only Globex's own template
 
 
 def test_no_active_policy_is_a_conflict(db, world):

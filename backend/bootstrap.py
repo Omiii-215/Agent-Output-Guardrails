@@ -5,7 +5,11 @@ from __future__ import annotations
 
 import importlib
 
-_MODULES = ("backend.policies.rules_common",)
+_MODULES = (
+    "backend.policies.rules_common",
+    "backend.modules.invoices.rules",
+    "backend.modules.invoices.handlers",
+)
 
 
 def load() -> None:

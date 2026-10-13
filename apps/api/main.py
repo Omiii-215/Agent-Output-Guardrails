@@ -10,7 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from apps.api.routes import cases, evidence, identity, operations, policies
+from apps.api.routes import cases, evidence, identity, invoices, operations, policies
 from backend import bootstrap
 from backend.adapters.oidc.verifier import OidcVerifier
 from backend.config import Settings, get_settings
@@ -33,6 +33,7 @@ ROUTERS = (
     evidence.router,
     cases.router,
     policies.router,
+    invoices.router,
     operations.router,
 )
 

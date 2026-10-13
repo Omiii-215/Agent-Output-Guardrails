@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -14,7 +14,8 @@ class RequiredFieldsParams(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     fields: list[str] = Field(min_length=1, max_length=40)
-    require_verified: bool = True
+    # ENTERED = typed by a person; EXTRACTED = machine-read, needs confirmation.
+    accepted_statuses: list[Literal["VERIFIED", "ENTERED", "EXTRACTED"]] = ["VERIFIED"]
 
 
 @rule(
@@ -33,7 +34,7 @@ def required_fields(inputs: dict[str, Any], params: RequiredFieldsParams) -> Rul
         if not entry or entry.get("value") in (None, ""):
             missing.append(name)
             continue
-        if params.require_verified and entry.get("status") != "VERIFIED":
+        if entry.get("status") not in params.accepted_statuses:
             unverified.append(name)
         refs.extend(entry.get("evidence_refs", []))
     if missing or unverified:

@@ -21,6 +21,7 @@ from sqlalchemy import text
 from apps.api.main import create_app
 from backend.config import Settings
 from backend.identity.models import Organization
+from backend.onboarding import install_default_policies
 from backend.persistence.database import Database
 from backend.persistence.embedded import PostgresUrls, create_database, migrate
 from backend.persistence.models import metadata
@@ -90,6 +91,8 @@ def app(db: Database, tmp_path: Path):
 @pytest.fixture
 def world(db: Database, two_orgs, app) -> World:
     acme, globex = two_orgs
+    for org in two_orgs:
+        install_default_policies(db, org)
     for org, domain in ((acme, "acme.test"), (globex, "globex.test")):
         add_member(db, org, f"admin@{domain}", ["org_admin"])
         add_member(db, org, f"operator@{domain}", ["finance_operator"])
