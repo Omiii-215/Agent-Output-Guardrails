@@ -23,46 +23,50 @@ export default function Policies() {
   });
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">Policies</h1>
-      <p className="muted text-sm">
-        Policies select reviewed rules with bounded parameters. Drafts are validated against regression scenarios and need an independent publisher.
-      </p>
+    <div className="space-y-5">
+      <div>
+        <h1 className="page-title">Policies</h1>
+        <p className="page-description mt-1">
+          Policies select reviewed rules with bounded parameters. Drafts are validated against regression scenarios and need an independent publisher.
+        </p>
+      </div>
       <Section title="Versions">
-        <table className="text-sm">
-          <thead>
-            <tr>
-              <th>Policy</th>
-              <th>Version</th>
-              <th>Lifecycle</th>
-              <th>Author</th>
-              <th>Publisher</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(policies.data ?? []).map((p) => (
-              <tr key={p.id}>
-                <td>
-                  <button className="btn text-xs" onClick={() => { setSelected(p); setDraft(JSON.stringify(p.document, null, 2)); }}>
-                    {p.policy_code}
-                  </button>
-                </td>
-                <td>{p.version}</td>
-                <td>
-                  <Status value={p.lifecycle === "PUBLISHED" ? "APPROVED" : p.lifecycle} />
-                </td>
-                <td>{p.author_subject}</td>
-                <td>{p.publisher_subject ?? "—"}</td>
+        <div className="overflow-x-auto">
+          <table className="text-sm">
+            <thead>
+              <tr>
+                <th>Policy</th>
+                <th>Version</th>
+                <th>Lifecycle</th>
+                <th>Author</th>
+                <th>Publisher</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(policies.data ?? []).map((p) => (
+                <tr key={p.id}>
+                  <td>
+                    <button className="btn text-xs" onClick={() => { setSelected(p); setDraft(JSON.stringify(p.document, null, 2)); }}>
+                      {p.policy_code}
+                    </button>
+                  </td>
+                  <td className="tabular-nums">{p.version}</td>
+                  <td>
+                    <Status value={p.lifecycle === "PUBLISHED" ? "APPROVED" : p.lifecycle} />
+                  </td>
+                  <td className="text-secondary">{p.author_subject}</td>
+                  <td className="text-secondary">{p.publisher_subject ?? "\u2014"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Section>
       {selected ? (
         <Section title={`${selected.policy_code} v${selected.version}`}>
-          <p className="mono muted">{selected.digest}</p>
+          <p className="mono">{selected.digest}</p>
           {selected.validation_errors?.length ? <ErrorNote error={{ message: selected.validation_errors.join("; ") }} /> : null}
-          <label className="block text-sm">
+          <label className="block text-sm font-medium">
             Document {can("policy.author") ? "(edit to create a new draft)" : "(read-only)"}
             <textarea className="mono" rows={18} value={draft} readOnly={!can("policy.author")} onChange={(e) => setDraft(e.target.value)} />
           </label>

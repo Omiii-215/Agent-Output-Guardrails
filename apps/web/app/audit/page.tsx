@@ -45,71 +45,77 @@ export default function Audit() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">Audit</h1>
+    <div className="space-y-5">
+      <div>
+        <h1 className="page-title">Audit</h1>
+        <p className="page-description mt-1">Append-only event log and purpose-scoped evidence exports.</p>
+      </div>
       <Section title="Evidence export">
         <form
-          className="grid gap-2 sm:grid-cols-3"
+          className="grid gap-3 sm:grid-cols-3"
           onSubmit={(e) => {
             e.preventDefault();
             request.mutate();
           }}
         >
-          <label className="text-sm sm:col-span-2">
+          <label className="text-sm font-medium sm:col-span-2">
             Case IDs (comma or space separated)
             <input value={caseIds} onChange={(e) => setCaseIds(e.target.value)} />
           </label>
-          <label className="text-sm">
+          <label className="text-sm font-medium">
             Purpose
             <input required minLength={5} value={purpose} onChange={(e) => setPurpose(e.target.value)} />
           </label>
           <button className="btn btn-primary">Request export</button>
         </form>
         {status.data ? (
-          <p className="text-sm">
-            <Status value={status.data.state === "READY" ? "CLEAN" : status.data.state} /> {status.data.case_count} cases · digest{" "}
-            <span className="mono">{status.data.bundle_digest}</span>{" "}
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <Status value={status.data.state === "READY" ? "CLEAN" : status.data.state} />
+            <span className="text-secondary">{status.data.case_count} cases</span>
+            <span className="mono">{status.data.bundle_digest}</span>
             {status.data.state === "READY" ? (
               <button className="btn text-xs" onClick={download}>
                 Download
               </button>
             ) : null}
-          </p>
+          </div>
         ) : null}
         <ErrorNote error={request.error ?? status.error} />
       </Section>
       <Section title="Audit events">
-        <label className="text-sm">
+        <label className="text-sm font-medium">
           Filter by action
           <input value={action} onChange={(e) => setAction(e.target.value)} placeholder="e.g. approval.approved" />
         </label>
         <ErrorNote error={events.error} />
-        <table className="text-sm">
-          <thead>
-            <tr>
-              <th>When</th>
-              <th>Actor</th>
-              <th>Action</th>
-              <th>Object</th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(events.data ?? []).map((e) => (
-              <tr key={e.id}>
-                <td className="muted">{new Date(e.occurred_at).toLocaleString()}</td>
-                <td>{e.actor_id}</td>
-                <td>
-                  {e.action} {e.simulated ? <SimulationTag /> : null}
-                </td>
-                <td className="mono">
-                  {e.object_type} {e.object_id?.slice(0, 8)}
-                </td>
-                <td>{e.reason ?? ""}</td>
+        <div className="overflow-x-auto">
+          <table className="text-sm">
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Actor</th>
+                <th>Action</th>
+                <th>Object</th>
+                <th>Reason</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {(events.data ?? []).map((e) => (
+                <tr key={e.id}>
+                  <td className="muted whitespace-nowrap">{new Date(e.occurred_at).toLocaleString()}</td>
+                  <td className="text-secondary">{e.actor_id}</td>
+                  <td>
+                    <span className="font-medium">{e.action}</span> {e.simulated ? <SimulationTag /> : null}
+                  </td>
+                  <td className="mono">
+                    {e.object_type} {e.object_id?.slice(0, 8)}
+                  </td>
+                  <td className="text-secondary">{e.reason ?? ""}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </Section>
     </div>
   );
