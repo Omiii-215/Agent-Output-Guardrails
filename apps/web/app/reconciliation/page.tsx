@@ -55,8 +55,11 @@ export default function Reconciliation() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">Reconciliation</h1>
+    <div className="space-y-5">
+      <div>
+        <h1 className="page-title">Reconciliation</h1>
+        <p className="page-description mt-1">Import bank and ledger records, review proposed matches, and resolve exceptions.</p>
+      </div>
       <Section title="Import records" actions={<button className="btn text-sm" onClick={downloadExport}>Export approved results</button>}>
         <form
           className="grid gap-3 sm:grid-cols-3"
@@ -65,7 +68,7 @@ export default function Reconciliation() {
             upload.mutate();
           }}
         >
-          <label className="text-sm">
+          <label className="text-sm font-medium">
             Side
             <select
               value={side}
@@ -79,11 +82,11 @@ export default function Reconciliation() {
               <option value="LEDGER">Accounting ledger</option>
             </select>
           </label>
-          <label className="text-sm">
+          <label className="text-sm font-medium">
             CSV file
             <input type="file" accept=".csv,text/csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           </label>
-          <label className="text-sm sm:row-span-2">
+          <label className="text-sm font-medium sm:row-span-2">
             Column mapping (JSON)
             <textarea rows={6} className="mono" value={mapping} onChange={(e) => setMapping(e.target.value)} />
           </label>
@@ -92,55 +95,61 @@ export default function Reconciliation() {
           </button>
         </form>
         <ErrorNote error={upload.error} />
-        <ul className="text-sm">
+        <ul className="text-sm space-y-1">
           {(imports.data ?? []).slice(0, 5).map((b) => (
-            <li key={b.id}>
-              {b.side} · <Status value={b.state === "IMPORTED" ? "CLEAN" : b.state} /> {b.imported_count} rows
-              {b.errors.length ? <span className="muted"> · {b.errors.length} issues ({b.errors[0]})</span> : null}
+            <li key={b.id} className="flex items-center gap-2">
+              <span className="text-secondary">{b.side}</span>
+              <Status value={b.state === "IMPORTED" ? "CLEAN" : b.state} />
+              <span>{b.imported_count} rows</span>
+              {b.errors.length ? <span className="muted">{b.errors.length} issues ({b.errors[0]})</span> : null}
             </li>
           ))}
         </ul>
       </Section>
 
       <Section title="Proposed exact matches">
-        <p className="muted text-sm">Only one-to-one matches with the same reference, signed amount and currency are proposed.</p>
-        <table className="text-sm">
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Bank</th>
-              <th>Ledger</th>
-              <th>Amount</th>
-              <th>Decision</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(matches.data ?? []).map((m) => {
-              const bank = m.rows.find((r: any) => r.side === "BANK");
-              const ledger = m.rows.find((r: any) => r.side === "LEDGER");
-              return (
-                <tr key={m.id}>
-                  <td className="mono">{m.basis.reference}</td>
-                  <td>
-                    {bank?.external_id} · {bank?.description}
-                  </td>
-                  <td>
-                    {ledger?.external_id} · {ledger?.description}
-                  </td>
-                  <td className="tabular-nums">{bank?.amount.formatted}</td>
-                  <td className="flex gap-1">
-                    <button className="btn text-xs" onClick={() => decide.mutate({ id: m.id, version: m.version, approve: true })}>
-                      Accept
-                    </button>
-                    <button className="btn text-xs" onClick={() => decide.mutate({ id: m.id, version: m.version, approve: false })}>
-                      Reject
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <p className="page-description">Only one-to-one matches with the same reference, signed amount and currency are proposed.</p>
+        <div className="overflow-x-auto">
+          <table className="text-sm">
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Bank</th>
+                <th>Ledger</th>
+                <th>Amount</th>
+                <th>Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(matches.data ?? []).map((m) => {
+                const bank = m.rows.find((r: any) => r.side === "BANK");
+                const ledger = m.rows.find((r: any) => r.side === "LEDGER");
+                return (
+                  <tr key={m.id}>
+                    <td className="mono">{m.basis.reference}</td>
+                    <td>
+                      {bank?.external_id} &middot; {bank?.description}
+                    </td>
+                    <td>
+                      {ledger?.external_id} &middot; {ledger?.description}
+                    </td>
+                    <td className="tabular-nums">{bank?.amount.formatted}</td>
+                    <td>
+                      <div className="flex gap-1">
+                        <button className="btn text-xs" onClick={() => decide.mutate({ id: m.id, version: m.version, approve: true })}>
+                          Accept
+                        </button>
+                        <button className="btn text-xs" onClick={() => decide.mutate({ id: m.id, version: m.version, approve: false })}>
+                          Reject
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         <ErrorNote error={decide.error} />
       </Section>
 
@@ -148,8 +157,8 @@ export default function Reconciliation() {
         <ul className="space-y-1 text-sm">
           {(exceptions.data ?? []).map((e) => (
             <li key={e.id}>
-              <Link href={`/cases/${e.case_id}`}>{e.kind.replaceAll("_", " ").toLowerCase()}</Link> · {e.transaction.side}{" "}
-              {e.transaction.external_id} · {e.transaction.amount.formatted}
+              <Link href={`/cases/${e.case_id}`}>{e.kind.replaceAll("_", " ").toLowerCase()}</Link> &middot; {e.transaction.side}{" "}
+              {e.transaction.external_id} &middot; {e.transaction.amount.formatted}
             </li>
           ))}
           {exceptions.data?.length === 0 ? <li className="muted">No open exceptions.</li> : null}
