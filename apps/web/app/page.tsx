@@ -26,17 +26,21 @@ export default function Overview() {
   }, {});
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">Overview</h1>
+    <div className="space-y-5">
+      <div>
+        <h1 className="page-title">Overview</h1>
+        <p className="page-description mt-1">Summary of active work across your organization.</p>
+      </div>
       {controls.data?.halted ? (
-        <p role="alert" className="card" style={{ color: "var(--block)" }}>
-          Emergency stop active: {controls.data.reason}. No new payment executions will be claimed.
-        </p>
+        <div role="alert" className="notice-banner notice-banner--warning">
+          <strong>Emergency stop active</strong>
+          <span>{controls.data.reason}. No new payment executions will be claimed.</span>
+        </div>
       ) : null}
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Stat label="Open cases" value={items.length} href="/queue" />
         <Stat label="Approvals waiting" value={approvals.data?.length} href="/approvals" />
-        <Stat label="Open reconciliation exceptions" value={recon.data?.open_exceptions} href="/reconciliation" />
+        <Stat label="Recon exceptions" value={recon.data?.open_exceptions} href="/reconciliation" />
       </div>
       <Section title="Open work by status">
         {cases.isLoading ? (
@@ -45,7 +49,7 @@ export default function Overview() {
           <ul className="flex flex-wrap gap-2">
             {Object.entries(byStatus).map(([status, n]) => (
               <li key={status} className="flex items-center gap-2">
-                <Status value={status} /> <span className="tabular-nums">{n}</span>
+                <Status value={status} /> <span className="tabular-nums text-sm font-medium">{n}</span>
               </li>
             ))}
             {items.length === 0 ? <li className="muted text-sm">Nothing open.</li> : null}
@@ -58,9 +62,9 @@ export default function Overview() {
 
 function Stat({ label, value, href }: { label: string; value: number | undefined; href: string }) {
   return (
-    <Link href={href} className="card block no-underline" style={{ color: "var(--text)" }}>
-      <div className="muted text-sm">{label}</div>
-      <div className="text-2xl font-bold tabular-nums">{value ?? "—"}</div>
+    <Link href={href} className="stat-card">
+      <div className="stat-card-label">{label}</div>
+      <div className="stat-card-value">{value ?? "\u2014"}</div>
     </Link>
   );
 }

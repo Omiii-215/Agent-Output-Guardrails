@@ -36,10 +36,13 @@ export default function Queue() {
   const rows = query.data?.pages.flatMap((p) => p.items) ?? [];
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-xl font-bold">Review queue</h1>
+    <div className="space-y-5">
+      <div>
+        <h1 className="page-title">Review queue</h1>
+        <p className="page-description mt-1">All cases across modules. Filter by status or module to narrow the list.</p>
+      </div>
       <div className="flex flex-wrap gap-3">
-        <label className="text-sm">
+        <label className="text-sm font-medium">
           Status
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             {STATUSES.map((s) => (
@@ -49,7 +52,7 @@ export default function Queue() {
             ))}
           </select>
         </label>
-        <label className="text-sm">
+        <label className="text-sm font-medium">
           Module
           <select value={module} onChange={(e) => setModule(e.target.value)}>
             <option value="">Any</option>
@@ -79,32 +82,34 @@ export default function Queue() {
               {rows.map((c) => (
                 <tr key={c.id}>
                   <td>
-                    <Link href={`/cases/${c.id}`}>{c.title}</Link>
+                    <Link href={`/cases/${c.id}`} className="font-medium">{c.title}</Link>
                   </td>
-                  <td>{c.module}</td>
+                  <td className="text-sm text-secondary">{c.module}</td>
                   <td>
                     <Status value={c.status} />
                   </td>
                   <td>
                     <Status value={c.outcome} />
                   </td>
-                  <td className="text-sm">{c.owner_subject ?? "—"}</td>
+                  <td className="text-sm text-secondary">{c.owner_subject ?? "\u2014"}</td>
                   <td className="muted text-sm">{new Date(c.updated_at).toLocaleString()}</td>
                 </tr>
               ))}
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="muted">
-                    No cases match.
+                  <td colSpan={6} className="muted py-6 text-center">
+                    No cases match the current filters.
                   </td>
                 </tr>
               ) : null}
             </tbody>
           </table>
           {query.hasNextPage ? (
-            <button className="btn mt-3" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>
-              Load more
-            </button>
+            <div className="mt-3 flex justify-center">
+              <button className="btn" onClick={() => query.fetchNextPage()} disabled={query.isFetchingNextPage}>
+                Load more
+              </button>
+            </div>
           ) : null}
         </div>
       )}
