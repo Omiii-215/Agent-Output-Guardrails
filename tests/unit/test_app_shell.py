@@ -35,3 +35,7 @@ def test_redaction_masks_account_numbers_and_ifsc():
     record = logging.LogRecord("finguard", logging.INFO, "", 0, "paid %s", ("998877665544",), None)
     RedactingFilter().filter(record)
     assert record.args == ("[REDACTED]",)
+
+
+def test_redaction_masks_ibans():
+    assert redact("pay GB81LZWO32519172531418 today") == "pay [REDACTED] today"

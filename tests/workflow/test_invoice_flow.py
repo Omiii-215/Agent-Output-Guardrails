@@ -238,3 +238,21 @@ def test_invoices_are_tenant_isolated(world):
         == 404
     )
     assert globex.get("/v1/vendors").json() == []
+
+
+def test_international_payee_needs_a_valid_iban_and_bic(world):
+    operator = world.acme_as("operator")
+    vendor = operator.post("/v1/vendors", json={"name": "Bradley-Andrade", "tax_id": None}).json()
+    url = f"/v1/vendors/{vendor['id']}/beneficiaries"
+    body = {"account_holder": "Bradley-Andrade", "ifsc": "LZWOGBXXXXX"}
+
+    mistyped = operator.post(url, json={**body, "account_number": "GB31LZX520242755934691"})
+    assert mistyped.status_code == 422 and mistyped.json()["error"]["code"] == "IBAN"
+    wrong_country = operator.post(
+        url, json={**body, "ifsc": "LZWODEXXXXX", "account_number": "GB81LZWO32519172531418"}
+    )
+    assert wrong_country.status_code == 422 and wrong_country.json()["error"]["code"] == "BIC"
+
+    ok = operator.post(url, json={**body, "account_number": "GB81 LZWO 3251 9172 5314 18"})
+    assert ok.status_code == 201, ok.text
+    assert ok.json()["account_masked"].endswith("1418")

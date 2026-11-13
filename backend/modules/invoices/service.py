@@ -44,6 +44,28 @@ SIMILAR_WINDOW_DAYS = 7
 
 _LEGAL_SUFFIXES = re.compile(r"\b(private|pvt|limited|ltd|llp|inc|co|company)\b")
 _IFSC = re.compile(r"^[A-Z]{4}0[A-Z0-9]{6}$")
+# International payees: IBAN plus an 11-character BIC (8-character BICs are padded
+# with the "XXX" head-office branch code before they reach this service).
+_IBAN = re.compile(r"^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$")
+_BIC = re.compile(r"^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}[A-Z0-9]{3}$")
+# Registered IBAN lengths for the countries pilots are expected to pay into.
+_IBAN_LENGTHS = {
+    "AE": 23, "BE": 16, "CH": 21, "DE": 22, "ES": 24, "FR": 27, "GB": 22,
+    "IE": 22, "IT": 27, "LU": 20, "NL": 18, "PT": 25, "SA": 24,
+}  # fmt: skip
+
+
+def iban_problem(iban: str) -> str | None:
+    """Why an IBAN is invalid, or None. Checks shape, country length and ISO 7064 mod 97."""
+    if not _IBAN.match(iban):
+        return "IBAN must be a country code, two check digits and up to 30 letters or digits"
+    expected = _IBAN_LENGTHS.get(iban[:2])
+    if expected and len(iban) != expected:
+        return f"{iban[:2]} IBANs have {expected} characters, this one has {len(iban)}"
+    digits = "".join(str(int(c, 36)) for c in iban[4:] + iban[:4])
+    if int(digits) % 97 != 1:
+        return "IBAN check digits do not match; the number was probably mistyped"
+    return None
 
 
 def normalize_vendor_name(name: str) -> str:
@@ -87,12 +109,23 @@ def add_beneficiary(
 ) -> BeneficiaryVersion:
     """Record new bank details. They stay UNVERIFIED until independently verified."""
     actor.require(Capability.VENDOR_WRITE)
-    account_number = re.sub(r"\s", "", account_number)
-    if not account_number.isdigit() or not 6 <= len(account_number) <= 20:
-        raise InvalidInput("Account number must be 6-20 digits", code="ACCOUNT_NUMBER")
+    account_number = re.sub(r"\s", "", account_number).upper()
     ifsc = ifsc.upper().strip()
-    if not _IFSC.match(ifsc):
-        raise InvalidInput("IFSC must look like ABCD0123456", code="IFSC")
+    if account_number[:2].isalpha():
+        problem = iban_problem(account_number)
+        if problem:
+            raise InvalidInput(problem, code="IBAN")
+        if not _BIC.match(ifsc) or ifsc[4:6] != account_number[:2]:
+            raise InvalidInput(
+                "Routing code must be an 11-character BIC for the IBAN's country", code="BIC"
+            )
+    else:
+        if not account_number.isdigit() or not 6 <= len(account_number) <= 20:
+            raise InvalidInput(
+                "Account number must be 6-20 digits or a valid IBAN", code="ACCOUNT_NUMBER"
+            )
+        if not _IFSC.match(ifsc):
+            raise InvalidInput("IFSC must look like ABCD0123456", code="IFSC")
     vendor = tx.get(Vendor, vendor_id, for_update=True)
     previous = (
         tx.find(BeneficiaryVersion, vendor.current_beneficiary_id)

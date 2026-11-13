@@ -20,6 +20,7 @@ _TRACE_ID_RE = re.compile(r"^[A-Za-z0-9-]{8,64}$")
 _REDACT_PATTERNS: tuple[re.Pattern[str], ...] = (
     re.compile(r"\b\d{9,18}\b"),
     re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b"),
+    re.compile(r"\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b"),  # IBAN
 )
 
 
