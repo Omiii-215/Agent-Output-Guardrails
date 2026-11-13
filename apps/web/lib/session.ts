@@ -15,6 +15,11 @@ export const PERSONAS = [
   { subject: "publisher@acme.test", label: "Policy publisher" },
   { subject: "admin@acme.test", label: "Organization administrator" },
   { subject: "operator@globex.test", label: "Globex operator (second tenant)" },
+  { subject: "operator@harbor.test", label: "Harbor Lane operator (Hugging Face dataset, USD)" },
+  { subject: "approver@harbor.test", label: "Harbor Lane approver ($50,000 limit)" },
+  { subject: "approver2@harbor.test", label: "Harbor Lane approver ($2,500 limit)" },
+  { subject: "controller@harbor.test", label: "Harbor Lane controller ($100,000 limit)" },
+  { subject: "auditor@harbor.test", label: "Harbor Lane auditor (read-only)" },
 ];
 
 export function loadSession(): DevSession | null {

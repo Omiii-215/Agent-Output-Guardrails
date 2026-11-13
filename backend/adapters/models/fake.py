@@ -27,9 +27,10 @@ _PATTERNS: dict[str, re.Pattern[str]] = {
     "invoice_date": re.compile(r"Invoice\s*Date\s*[:\-]?\s*(\d{4}-\d{2}-\d{2})", re.I),
     "due_date": re.compile(r"Due\s*Date\s*[:\-]?\s*(\d{4}-\d{2}-\d{2})", re.I),
     "po_number": re.compile(r"PO\s*(?:No\.?|Number|#)\s*[:\-]?\s*([A-Z0-9][A-Z0-9\-]*)", re.I),
-    "total": re.compile(r"Grand\s*Total\s*[:\-]?\s*(?:INR|Rs\.?|₹)?\s*([\d,]+\.\d{2})", re.I),
+    "total": re.compile(r"Grand\s*Total\s*[:\-]?\s*(?:[A-Z]{3}|Rs\.?|₹)?\s*([\d,]+\.\d{2})", re.I),
 }
-_CURRENCY = re.compile(r"\b(INR)\b|₹")
+# ISO codes the platform accepts; a bare "$" is ambiguous (USD, SGD, ...) so it is ignored.
+_CURRENCY = re.compile(r"\b(INR|USD|EUR|GBP|SGD|AED|JPY|KWD|BHD)\b|₹")
 _LINE = re.compile(
     r"^(?P<desc>[^|\n]+?)\s*\|\s*(?P<qty>\d+(?:\.\d+)?)\s*\|\s*(?P<price>[\d,]+\.\d{2})"
     r"\s*\|\s*(?P<tax>\d+(?:\.\d+)?)%\s*$",
@@ -70,7 +71,7 @@ class FakeModelProvider:
                 fields.append(
                     ExtractedField(
                         name="currency",
-                        value="INR",
+                        value=c.group(1) or "INR",
                         citation=Citation(page=page, start=c.start(), end=c.end()),
                         confidence=0.8,
                     )

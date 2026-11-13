@@ -106,6 +106,54 @@ const PERSONA_DETAILS: Record<
       "Upload invoices & process Globex cases",
     ],
     restriction: "Tenant isolated: cannot access Acme Corp data",
+  },  "operator@harbor.test": {
+    role: "Finance Operator",
+    roleTag: "finance_operator",
+    tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
+    canDo: [
+      "Work the 26 real dataset invoices and their findings",
+      "Propose payments for invoices that passed",
+    ],
+    restriction: "Cannot approve payments or see Acme and Globex data",
+  },
+  "approver@harbor.test": {
+    role: "Finance Approver",
+    roleTag: "finance_approver",
+    tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
+    canDo: [
+      "Approve payments up to $50,000",
+      "Verify vendor bank details",
+    ],
+    restriction: "Cannot approve payments they proposed",
+  },
+  "approver2@harbor.test": {
+    role: "Finance Approver (low limit)",
+    roleTag: "finance_approver",
+    tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
+    canDo: [
+      "Approve payments up to $2,500",
+    ],
+    restriction: "Refused on anything above $2,500",
+  },
+  "controller@harbor.test": {
+    role: "Financial Controller",
+    roleTag: "finance_approver",
+    tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
+    canDo: [
+      "Approve payments up to $100,000",
+      "Second approval on payments above $5,000",
+    ],
+    restriction: "Cannot approve payments they proposed",
+  },
+  "auditor@harbor.test": {
+    role: "Auditor",
+    roleTag: "auditor",
+    tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
+    canDo: [
+      "Read every case, finding and payment",
+      "Export evidence packs",
+    ],
+    restriction: "Read-only: cannot change anything",
   },
 };
 

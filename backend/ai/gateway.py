@@ -19,6 +19,7 @@ from backend.adapters.models.base import (
     FindingSummaryInput,
     ModelProvider,
 )
+from backend.domain.money import CURRENCY_EXPONENTS
 
 # Phrases that try to steer an assistant. Flagging them makes the document
 # reviewable; nothing in the document is ever executed or obeyed.
@@ -97,7 +98,7 @@ def _value_ok(name: str, value: str) -> bool:
         elif name == "total":
             return Decimal(value.replace(",", "")) >= 0
         elif name == "currency":
-            return value in ("INR",)
+            return value in CURRENCY_EXPONENTS
     except (ValueError, InvalidOperation):
         return False
     return True

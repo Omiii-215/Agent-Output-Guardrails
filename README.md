@@ -54,6 +54,16 @@ npm --prefix apps/web install && npm --prefix apps/web run dev
 
 Open http://localhost:3000 and pick a persona (operator, approver, auditor, policy author/publisher, admin, or the second tenant's operator). Local development uses SQLite under `var/`; delete that folder to reseed.
 
+### Real dataset run (Hugging Face)
+
+With the API and worker running, this pushes the 26 test invoices of the public [katanaml-org/invoices-donut-data-v1](https://huggingface.co/datasets/katanaml-org/invoices-donut-data-v1) dataset through the whole product under a third tenant, Harbor Lane Supply Co. (USD):
+
+```bash
+PYTHONPATH=. uv run python scripts/import_hf_invoices.py
+```
+
+It fetches the labelled fields (not the images) once into `var/hf/`, publishes USD policies through the author/publisher flow, then for every invoice runs upload, extraction, confirmation against the labels, the checks, a simulated payment batch, a vendor resubmission and a reconciliation import. Sign in as `operator@harbor.test`, `approver@harbor.test`, `controller@harbor.test` or `auditor@harbor.test` to work the results. The dataset's companies are generated rather than real businesses, and its labelling mistakes are kept on purpose: a total with a stray digit, mistyped IBANs and a shifted seller label. There is no OCR yet, so each invoice is rendered from its labels into a text PDF before extraction.
+
 With Docker instead (PostgreSQL with row-level security):
 
 ```bash
