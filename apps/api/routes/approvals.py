@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from apps.api.deps import get_runtime, require, tenant_tx
 from backend.actions.handlers import proposal_view
-from backend.actions.models import ActionProposal
+from backend.actions.models import ActionProposal, ProposalState
 from backend.approvals import service as approvals
 from backend.approvals.models import ApprovalRequest
 from backend.cases.models import Case
@@ -40,7 +40,9 @@ def _request_out(tx: TenantSession, request: ApprovalRequest) -> dict:
     case = tx.get(Case, proposal.case_id)
     return {
         "id": str(request.id),
-        "state": approvals.effective_state(request),
+        "state": approvals.effective_state(
+            request, used=proposal.state == ProposalState.INTENT_CREATED
+        ),
         "revision": request.revision,
         "required_count": request.required_count,
         "approved_count": len(approvals.valid_approvals(tx, request)),

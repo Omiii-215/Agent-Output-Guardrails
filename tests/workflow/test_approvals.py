@@ -149,3 +149,16 @@ def decide_as_globex(world, request):
         f"/v1/approval-requests/{request['id']}/decisions",
         json={"decision": "APPROVE", "reason": "probe", "expected_revision": 1},
     )
+
+
+def test_used_approval_is_not_reported_expired_later(world, runtime, db):
+    from tests.support import create_intent
+
+    detail, proposal, request = approved_proposal(world, runtime)
+    create_intent(world, proposal, request)
+    with db.admin() as s:
+        s.execute(update(ApprovalRequest).values(expires_at=utcnow() - timedelta(minutes=1)))
+    case = case_detail(world, detail["case"]["id"])
+    assert case["proposals"][0]["approval"]["state"] == "APPROVED"
+    shown = world.acme_as("approver").get(f"/v1/approval-requests/{request['id']}").json()
+    assert shown["state"] == "APPROVED"

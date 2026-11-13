@@ -107,8 +107,14 @@ def _expired(request: ApprovalRequest) -> bool:
     return ensure_aware(request.expires_at) <= utcnow()
 
 
-def effective_state(request: ApprovalRequest) -> str:
-    """Pending or approved requests past their expiry are no longer usable."""
+def effective_state(request: ApprovalRequest, *, used: bool = False) -> str:
+    """Pending or approved requests past their expiry are no longer usable.
+
+    ``used`` marks an approval that an execution intent already relied on while it
+    was valid; it is reported as APPROVED rather than EXPIRED afterwards.
+    """
+    if used:
+        return request.state
     if request.state in (RequestState.PENDING, RequestState.APPROVED) and _expired(request):
         return RequestState.EXPIRED
     return request.state
@@ -275,7 +281,7 @@ def summary(tx: TenantSession, proposal: ActionProposal) -> dict:
     return {
         "approval": {
             "id": request.id,
-            "state": effective_state(request),
+            "state": effective_state(request, used=proposal.state == ProposalState.INTENT_CREATED),
             "state_reason": request.state_reason,
             "required_count": request.required_count,
             "approved_count": len(valid_approvals(tx, request)),

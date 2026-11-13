@@ -475,7 +475,10 @@ def view(tx: TenantSession, intent: ActionIntent) -> dict[str, Any]:
         "action_digest": intent.action_digest,
         "amount_minor": str(intent.amount_minor),
         "currency": intent.currency,
-        "approval": {"request_id": request.id, "state": approvals.effective_state(request)},
+        "approval": {
+            "request_id": request.id,
+            "state": approvals.effective_state(request, used=True),
+        },
         "execution": {
             "state": intent.state,
             "reason": intent.state_reason,
