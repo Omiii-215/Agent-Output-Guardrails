@@ -1,0 +1,297 @@
+@import "tailwindcss";
+@source "../app/**/*.{ts,tsx}";
+
+.font-900 { font-weight: 900; }
+.font-800 { font-weight: 800; }
+
+/* ── FinGuard Design Tokens (Tailwind v4 theme) ── */
+@theme {
+  --color-bone: #EFE9DC;
+  --color-ink: #0C0C0D;
+  --color-vermilion: #FF3B1F;
+  --color-verify: #19D27A;
+  --color-carbon: #1A1A1C;
+  --color-ledger: #D9D1BF;
+
+  --font-display: "Big Shoulders Display", ui-sans-serif, sans-serif;
+  --font-accent:  "Instrument Serif", ui-serif, serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+  --font-body:    "Instrument Sans", ui-sans-serif, sans-serif;
+}
+
+/* ── Base ── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bone);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Paper Grain overlay ── */
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 300px 300px;
+  background-repeat: repeat;
+}
+
+/* ── Ledger ruled lines ── */
+.ledger-lines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 31px,
+    var(--color-ledger) 31px,
+    var(--color-ledger) 32px
+  );
+}
+
+/* ── Rubber stamp ── */
+.stamp {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.2em 0.55em;
+  border: 3px solid currentColor;
+  border-radius: 3px;
+  position: relative;
+  line-height: 1.4;
+}
+.stamp::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  opacity: 0.25;
+}
+.stamp-vermilion { color: var(--color-vermilion); border-color: var(--color-vermilion); }
+.stamp-verify    { color: var(--color-verify);    border-color: var(--color-verify);    }
+
+/* ── Perforated edges ── */
+.perforated-top    { border-top:    3px dashed var(--color-ledger); }
+.perforated-bottom { border-bottom: 3px dashed var(--color-ledger); }
+
+/* ── Ticket clip-path card ── */
+.ticket-card {
+  clip-path: polygon(
+    0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%,
+    12px 100%, 0 calc(100% - 12px)
+  );
+}
+
+/* ── Selection colour ── */
+::selection { background-color: var(--color-vermilion); color: #fff; }
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 3px solid var(--color-vermilion);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* ════════════════════════════════
+   KEYFRAMES
+   ════════════════════════════════ */
+
+@keyframes clip-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0);   }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes stamp-slam {
+  0%   { transform: scale(2.5) rotate(-8deg); opacity: 0; }
+  45%  { transform: scale(1)   rotate(-4deg); opacity: 1; }
+  55%  { transform: scale(1.06) rotate(-3deg); }
+  100% { transform: scale(1)   rotate(-4deg); opacity: 1; }
+}
+.stamp-slam { animation: stamp-slam 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+@keyframes shake {
+  0%,100% { transform: translate(0,0) rotate(0); }
+  10%  { transform: translate(-4px,-2px) rotate(-1deg); }
+  20%  { transform: translate(4px,2px) rotate(1deg); }
+  30%  { transform: translate(-3px,1px) rotate(-0.5deg); }
+  40%  { transform: translate(3px,-1px) rotate(0.5deg); }
+  60%  { transform: translate(2px,-2px) rotate(0.3deg); }
+  80%  { transform: translate(1px,-1px) rotate(0); }
+}
+.screen-shake { animation: shake 0.4s ease-out; }
+
+@keyframes button-deny {
+  0%,100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(8px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(3px); }
+}
+.button-deny { animation: button-deny 0.5s ease-out; }
+
+@keyframes rattle {
+  0%,100% { transform: rotate(0); }
+  15% { transform: rotate(-10deg); }
+  30% { transform: rotate(10deg); }
+  45% { transform: rotate(-6deg); }
+  60% { transform: rotate(6deg); }
+  75% { transform: rotate(-3deg); }
+}
+.rattle { animation: rattle 0.5s ease-in-out; }
+
+@keyframes flicker {
+  0%   { opacity: 1; }
+  10%  { opacity: 0.3; }
+  20%  { opacity: 0.9; }
+  30%  { opacity: 0.1; }
+  40%  { opacity: 0.7; }
+  55%  { opacity: 0; }
+  70%  { opacity: 0.2; }
+  85%  { opacity: 0.05; }
+  100% { opacity: 0; }
+}
+.static-flicker { animation: flicker 0.9s ease-out forwards; }
+
+@keyframes marquee-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.marquee-left  { animation: marquee-left  40s linear infinite; }
+.marquee-right { animation: marquee-right 60s linear infinite; }
+
+@keyframes scanDown {
+  0%   { top: 0%;   }
+  100% { top: 100%; }
+}
+
+/* ── Money Falling & Finance Animations ── */
+@keyframes money-fall {
+  0% {
+    transform: translateY(-80px) translateX(0) rotate(var(--rot, 0deg));
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(50vh) translateX(var(--wobble, 20px)) rotate(calc(var(--rot, 0deg) + 180deg));
+  }
+  85% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(115vh) translateX(calc(var(--wobble, 20px) * -1)) rotate(calc(var(--rot, 0deg) + 360deg));
+    opacity: 0;
+  }
+}
+.money-particle {
+  animation: money-fall linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes finance-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.finance-ticker {
+  animation: finance-ticker 30s linear infinite;
+}
+.finance-ticker:hover {
+  animation-play-state: paused;
+}
+
+/* Coin spin */
+@keyframes coin-flip {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+.coin-spin {
+  animation: coin-flip 2.4s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+/* Float invoice paper */
+@keyframes paper-float {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+.paper-float {
+  animation: paper-float 5s ease-in-out infinite;
+}
+
+@keyframes packetForward {
+  0%   { left: 0%;               opacity: 1; }
+  100% { left: calc(100% - 12px); opacity: 1; }
+}
+@keyframes packetReturn {
+  0%   { right: 0%;   opacity: 1; }
+  50%  { right: 40%;  opacity: 1; }
+  70%  { right: 50%;  opacity: 0.3; }
+  100% { right: 55%;  opacity: 0; }
+}
+
+/* ── Hero headline reveal classes ── */
+.headline-reveal         { clip-path: inset(0 100% 0 0); }
+.headline-reveal.is-visible {
+  animation: clip-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+.headline-reveal-delayed { clip-path: inset(0 100% 0 0); }
+.headline-reveal-delayed.is-visible {
+  animation: clip-reveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+}
+.subline-fade            { opacity: 0; }
+.subline-fade.is-visible { animation: fade-in 0.7s ease 0.6s forwards; }
+.cta-fade                { opacity: 0; }
+.cta-fade.is-visible     { animation: fade-in 0.5s ease 0.9s forwards; }
+.stamp-appear            { opacity: 0; }
+.stamp-appear.is-stamped { animation: fade-in 0.3s ease forwards; }
+
+/* Reduced-motion overrides for hero */
+.reduced-motion .headline-reveal,
+.reduced-motion .headline-reveal-delayed {
+  clip-path: none;
+  opacity: 0;
+}
+.reduced-motion .headline-reveal.is-visible,
+.reduced-motion .headline-reveal-delayed.is-visible {
+  animation: fade-in 0.5s ease forwards;
+}
+.reduced-motion .headline-reveal-delayed.is-visible {
+  animation-delay: 0.15s;
+}
+
+/* ════════════════════════════════
+   GLOBAL REDUCED MOTION
+   ════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .stamp-slam,
+  .screen-shake,
+  .button-deny,
+  .rattle,
+  .static-flicker { animation: none !important; opacity: 1; }
+
+  .marquee-left,
+  .marquee-right  { animation: none !important; }
+}
