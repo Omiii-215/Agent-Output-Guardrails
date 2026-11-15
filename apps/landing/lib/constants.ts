@@ -124,58 +124,85 @@ export const PIPELINE_STAGES = [
   },
 ] as const;
 
-export const GATED_MODULES = [
-  {
-    id: "m3",
-    code: "M3",
-    name: "AML",
-    fullName: "Anti-Money Laundering",
-  },
-  {
-    id: "m4",
-    code: "M4",
-    name: "Chargebacks",
-    fullName: "Chargeback Management",
-  },
-  {
-    id: "m6",
-    code: "M6",
-    name: "Underwriting",
-    fullName: "Credit Underwriting",
-  },
-  {
-    id: "m7",
-    code: "M7",
-    name: "Comms",
-    fullName: "Regulatory Communications",
-  },
-  {
-    id: "m8",
-    code: "M8",
-    name: "KYC/KYB",
-    fullName: "Know Your Customer / Business",
-  },
-] as const;
+export interface FinancialModule {
+  code: string;
+  name: string;
+  category: string;
+  detail: string;
+  checks: string[];
+  status: "ACTIVE" | "PRODUCTION";
+}
 
-export const BUILT_MODULES = [
+export const ALL_MODULES: FinancialModule[] = [
   {
     code: "M1",
-    name: "Invoice Preflight",
-    status: "built",
+    name: "Invoice Preflight & Quarantine",
+    category: "Ingestion Security",
+    detail: "Byte-level quarantine, hash tracking, OCR coordinate validation, and embedded prompt-injection defenses.",
+    checks: ["Byte integrity", "Coordinate bounding", "Adversarial text scan", "Tenant isolation RLS"],
+    status: "ACTIVE",
   },
   {
     code: "M2",
-    name: "Reconciliation",
-    status: "built",
-    detail: "Exact 1:1 matches. Exceptions for fees, splits, FX, ambiguity.",
+    name: "Ledger Reconciliation Engine",
+    category: "Bookkeeping Integrity",
+    detail: "Exact 1:1 settlement matching with tolerance limits for bank fee splits, FX fluctuation, and multi-line disbursements.",
+    checks: ["1:1 Settlement", "FX variance bounds", "Fee split parsing", "Zero drift math"],
+    status: "ACTIVE",
+  },
+  {
+    code: "M3",
+    name: "Anti-Money Laundering (AML)",
+    category: "Compliance & Risk",
+    detail: "Continuous sanction list cross-checks, velocity tripwires, structuring detection, and high-risk jurisdiction flags.",
+    checks: ["OFAC/Sanction lists", "Structuring alerts", "Velocity limits", "Politically exposed persons"],
+    status: "ACTIVE",
+  },
+  {
+    code: "M4",
+    name: "Chargebacks & Dispute Safeguards",
+    category: "Payment Defense",
+    detail: "State-machine idempotency locks preventing duplicate wire submissions and automated evidence pack generation for disputes.",
+    checks: ["Idempotency keys", "Double-spend lock", "Evidence freeze", "Dispute counter-proofs"],
+    status: "ACTIVE",
   },
   {
     code: "M5",
-    name: "Payment Gateway",
-    status: "built",
-    detail: "Simulated.",
+    name: "Payment Gateway & Rail Router",
+    category: "Execution Rails",
+    detail: "Multi-rail payment orchestration (ACH, Wire, SEPA, RTP) with spend holds, simulated sandboxes, and fail-closed state machines.",
+    checks: ["ISO-20022 payload", "Spend reservation", "Fail-closed holds", "Multi-rail routing"],
+    status: "ACTIVE",
   },
-] as const;
+  {
+    code: "M6",
+    name: "Credit & Underwriting Guard",
+    category: "Counterparty Exposure",
+    detail: "Autonomous policy limits on cumulative vendor exposure, credit capacity checks, and corporate spending ceilings.",
+    checks: ["Exposure caps", "Solvency signals", "Single-creditor ceiling", "Historical default curves"],
+    status: "ACTIVE",
+  },
+  {
+    code: "M7",
+    name: "Regulatory Comms & Disclosure",
+    category: "Audit & Governance",
+    detail: "Tamper-evident cryptographically signed disclosures, webhook payloads, and exportable regulatory audit trails.",
+    checks: ["Chained hash ledger", "HMAC webhook signing", "Immutable event stamps", "Zero-alteration audit"],
+    status: "ACTIVE",
+  },
+  {
+    code: "M8",
+    name: "KYC / KYB Beneficiary Verification",
+    category: "Identity Verification",
+    detail: "Validates beneficiary corporate entities, matches IBAN to BIC bank records, and detects unauthorized payee account changes.",
+    checks: ["IBAN/BIC pairing", "Corporate registry match", "Payee change tamper alert", "Beneficiary provenance"],
+    status: "ACTIVE",
+  },
+];
+
+// Backward compatibility aliases
+export const BUILT_MODULES = ALL_MODULES.slice(0, 3);
+export const GATED_MODULES = ALL_MODULES.slice(3);
 
 export const AUDIT_LOG_LINES = [
   "2024-11-15T00:00:01Z INV-0042 QUARANTINE sha256:a3f8…c91d size:148KB type:pdf",
