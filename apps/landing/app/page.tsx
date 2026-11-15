@@ -15,7 +15,6 @@ import AuditTicker from "./components/AuditTicker";
 import HonestySection from "./components/HonestySection";
 import PersonaPicker from "./components/PersonaPicker";
 import Footer from "./components/Footer";
-import InteractiveStampCanvas from "./components/InteractiveStampCanvas";
 
 export default function Home() {
   return (
@@ -39,7 +38,6 @@ export default function Home() {
         <PersonaPicker />
       </main>
       <Footer />
-      <InteractiveStampCanvas />
     </>
   );
 }
