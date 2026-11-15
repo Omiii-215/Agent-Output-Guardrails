@@ -34,12 +34,14 @@ export default function CtaButton({
   const ref = useRef<HTMLAnchorElement>(null);
   useMagnetic(ref as React.RefObject<HTMLElement | null>);
 
-  const href = `${DASHBOARD_URL}${persona ? `?persona=${persona}` : ""}`;
+  const href = `${DASHBOARD_URL}${persona ? `?persona=${persona}` : "?persona=operator"}`;
 
   return (
     <a
       ref={ref}
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       className={[
         "inline-block rounded-md font-display uppercase font-extrabold tracking-wide",
         "transition-all duration-200 ease-out will-change-transform",

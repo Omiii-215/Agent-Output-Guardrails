@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useReducedMotion, useInView } from "@/lib/hooks";
+import { DASHBOARD_URL } from "@/lib/constants";
 
 interface Scenario {
   id: "normal" | "limit_breach" | "prompt_injection";
@@ -331,7 +332,9 @@ export default function CapitalFlowVisualizer() {
             </p>
           </div>
           <a
-            href="http://localhost:3000"
+            href={`${DASHBOARD_URL}?persona=operator`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-mono text-xs font-bold uppercase tracking-wider px-4 py-2 rounded bg-verify text-ink hover:bg-verify/90 transition-all shrink-0"
           >
             Test In Live Dashboard →

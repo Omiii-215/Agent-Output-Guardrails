@@ -1,12 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import { useSession } from "@/app/providers";
 import { api } from "@/lib/api";
 import { PERSONAS } from "@/lib/session";
 import { ErrorNote } from "@/components/ui";
+
+const PERSONA_ALIAS_MAP: Record<string, string> = {
+  operator: "operator@acme.test",
+  approver: "approver@acme.test",
+  approver2: "approver2@acme.test",
+  auditor: "auditor@acme.test",
+  "policy-author": "author@acme.test",
+  author: "author@acme.test",
+  publisher: "publisher@acme.test",
+  admin: "admin@acme.test",
+  globex: "operator@globex.test",
+  harbor: "operator@harbor.test",
+};
 
 type Me = { memberships: { organization_id: string; organization_name: string; roles: string[] }[] };
 
@@ -157,14 +170,39 @@ const PERSONA_DETAILS: Record<
   },
 };
 
-export default function LoginPage() {
+function LoginForm() {
   const { setSession } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [subject, setSubject] = useState(PERSONAS[0].subject);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
 
   const selectedDetails = PERSONA_DETAILS[subject] ?? PERSONA_DETAILS["operator@acme.test"];
+
+  useEffect(() => {
+    const personaParam = searchParams.get("persona");
+    if (!personaParam) return;
+    const targetSubject = PERSONA_ALIAS_MAP[personaParam.toLowerCase()] ?? personaParam;
+    if (targetSubject) {
+      setSubject(targetSubject);
+      (async () => {
+        setLoading(true);
+        try {
+          setSession({ subject: targetSubject, organizationId: null });
+          const me = await api<Me>("/v1/me");
+          if (me.memberships.length > 0) {
+            setSession({ subject: targetSubject, organizationId: me.memberships[0].organization_id });
+            router.push("/");
+          }
+        } catch {
+          setSession(null);
+        } finally {
+          setLoading(false);
+        }
+      })();
+    }
+  }, [searchParams, router, setSession]);
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
@@ -451,5 +489,13 @@ export default function LoginPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading workspace...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

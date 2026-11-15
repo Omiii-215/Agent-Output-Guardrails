@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useReducedMotion, useInView } from "@/lib/hooks";
-import { ALL_MODULES, FinancialModule } from "@/lib/constants";
+import { ALL_MODULES, FinancialModule, DASHBOARD_URL } from "@/lib/constants";
 
 function ShieldCheckIcon({ className }: { className?: string }) {
   return (
@@ -178,7 +178,9 @@ export default function ModulesWall() {
             </p>
           </div>
           <a
-            href="http://localhost:3000"
+            href={`${DASHBOARD_URL}/modules?persona=operator`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="font-mono text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded bg-ink text-bone hover:bg-vermilion transition-colors whitespace-nowrap"
           >
             Open Live Modules →
