@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/app/providers";
 import { api } from "@/lib/api";
@@ -88,6 +88,15 @@ export function Shell({ children }: { children: ReactNode }) {
   const me = useMe();
 
   const isPublic = path === "/login" || path === "/how-it-works";
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // In the compact top bar the nav scrolls sideways; keep the current page's tab in view.
+  useEffect(() => {
+    const active = navRef.current?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (active && window.matchMedia("(max-width: 1023px)").matches) {
+      active.scrollIntoView({ block: "nearest", inline: "center" });
+    }
+  }, [path, session]);
 
   useEffect(() => {
     if (ready && !session && !isPublic) router.replace("/login");
@@ -99,8 +108,8 @@ export function Shell({ children }: { children: ReactNode }) {
       <div className="min-h-screen" style={{ background: "var(--bg)" }}>
         <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
           <div className="mb-6 flex items-center justify-between border-b pb-4" style={{ borderColor: "var(--border)" }}>
-            <span className="text-sm font-semibold tracking-wide" style={{ color: "var(--fg)" }}>
-              FinGuard
+            <span className="wordmark text-xl">
+              FIN<span>GUARD</span>
             </span>
             <Link href="/login" className="btn btn-secondary text-xs">
               &larr; Back to sign in
@@ -114,16 +123,18 @@ export function Shell({ children }: { children: ReactNode }) {
   if (!ready || !session) return null;
 
   return (
-    <div className="min-h-screen md:flex">
+    <div className="min-h-screen lg:flex">
       <a href="#main" className="sr-only focus:not-sr-only">
         Skip to content
       </a>
-      <nav aria-label="Main" className="sidebar">
+      <nav aria-label="Main" className="sidebar ink-panel">
         <div className="sidebar-brand">
-          <div className="sidebar-brand-name">FinGuard</div>
-          <div className="sidebar-brand-tagline">Evidence and control platform</div>
+          <div className="sidebar-brand-name wordmark">
+            FIN<span>GUARD</span>
+          </div>
+          <div className="sidebar-brand-tagline">Evidence &amp; control desk</div>
         </div>
-        <div className="sidebar-nav">
+        <div className="sidebar-nav" ref={navRef}>
           <ul>
             {NAV.map((item) => (
               <li key={item.href}>
@@ -144,15 +155,15 @@ export function Shell({ children }: { children: ReactNode }) {
             <div className="sidebar-user-name">{me.data?.display_name ?? session.subject}</div>
             <div className="sidebar-user-role">{me.data?.roles.join(", ").replaceAll("_", " ")}</div>
           </div>
-          <button className="btn mt-2 text-xs" onClick={() => setSession(null)}>
+          <button className="btn btn-secondary text-xs lg:mt-3 lg:w-full" onClick={() => setSession(null)}>
             Switch user
           </button>
         </div>
       </nav>
       <main id="main" className="page-content flex-1 space-y-5">
         <div className="notice-banner notice-banner--info">
-          <span style={{ flexShrink: 0, fontWeight: 600 }}>Prototype</span>
-          <span>Running on synthetic data. Payment execution is simulated. No live provider, bank or customer data is connected.</span>
+          <span className="stamp" style={{ flexShrink: 0 }}>Prototype</span>
+          <span>This runs on sample data and payments are simulated. No real bank or customer data is connected.</span>
         </div>
         {children}
       </main>

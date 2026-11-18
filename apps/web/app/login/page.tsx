@@ -38,94 +38,94 @@ const PERSONA_DETAILS: Record<
     roleTag: "finance_operator",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Upload invoices & verify extracted fields",
-      "Run policy checks on cases",
-      "Draft payment proposals",
-      "Import reconciliation records",
+      "Upload invoices and confirm what the AI read",
+      "Run the checks on an invoice",
+      "Ask for a payment",
+      "Import bank and ledger records",
     ],
-    restriction: "Cannot approve payment proposals or publish policies",
+    restriction: "Can’t approve payments or publish rules",
   },
   "approver@acme.test": {
     role: "Finance Approver",
     roleTag: "finance_approver",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Review & decide payment proposals",
-      "Resolve review-level findings",
-      "Verify vendor beneficiaries",
-      "Trigger payment emergency stop",
+      "Approve or reject payment requests",
+      "Clear issues flagged for review",
+      "Confirm supplier bank details",
+      "Use the emergency stop on payments",
     ],
-    restriction: "Cannot approve own proposals (maker-checker separation)",
+    restriction: "Can’t approve their own requests (maker-checker)",
   },
   "approver2@acme.test": {
     role: "Finance Approver (₹50k limit)",
     roleTag: "finance_approver",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Approve payments under ₹50,000 threshold",
-      "Examine policy evaluation findings",
-      "Review vendor compliance status",
+      "Approve payments under ₹50,000",
+      "Read the check results",
+      "See each supplier’s status",
     ],
-    restriction: "Requires tier escalation for payments above ₹50,000",
+    restriction: "Payments over ₹50,000 need a more senior approver",
   },
   "auditor@acme.test": {
     role: "Auditor",
     roleTag: "auditor",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Inspect complete case history & decisions",
-      "Read immutable audit event stream",
-      "Export tamper-evident evidence packages",
+      "See every case’s full history and decisions",
+      "Read the audit log",
+      "Export evidence packs",
     ],
-    restriction: "Read-only access; cannot create or mutate cases",
+    restriction: "Read-only: can’t create or change anything",
   },
   "author@acme.test": {
     role: "Policy Author",
     roleTag: "policy_author",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Draft & update business rules (JSON)",
-      "Run automated regression test suites",
+      "Write and edit business rules",
+      "Test rule changes against saved examples",
     ],
-    restriction: "Cannot publish policies into production (requires publisher)",
+    restriction: "Can’t make rules live (a publisher has to)",
   },
   "publisher@acme.test": {
     role: "Policy Publisher",
     roleTag: "policy_publisher",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Validate & publish active policies",
-      "Record mandatory business justification",
+      "Check and publish rules",
+      "Give a reason for every change",
     ],
-    restriction: "Cannot author policy drafts (four-eyes segregation)",
+    restriction: "Can’t write the rules they publish (four-eyes)",
   },
   "admin@acme.test": {
     role: "Organization Admin",
     roleTag: "org_admin",
     tenant: "Acme Corp (Primary)",
     canDo: [
-      "Manage organization members & roles",
-      "Monitor operational health & queues",
-      "Activate system-wide emergency halt",
+      "Manage people and their roles",
+      "Watch system health and work queues",
+      "Stop all payments in an emergency",
     ],
-    restriction: "Cannot create invoices or approve payments",
+    restriction: "Can’t create invoices or approve payments",
   },
   "operator@globex.test": {
     role: "Finance Operator",
     roleTag: "finance_operator",
-    tenant: "Globex Corp (Second Tenant)",
+    tenant: "Globex Corp (second company)",
     canDo: [
-      "Isolated operator access for Globex",
-      "Upload invoices & process Globex cases",
+      "Works only on Globex’s data",
+      "Upload and process Globex invoices",
     ],
-    restriction: "Tenant isolated: cannot access Acme Corp data",
+    restriction: "Kept separate: can’t see Acme Corp data",
   },  "operator@harbor.test": {
     role: "Finance Operator",
     roleTag: "finance_operator",
     tenant: "Harbor Lane Supply Co. (Hugging Face dataset, USD)",
     canDo: [
-      "Work the 26 real dataset invoices and their findings",
-      "Propose payments for invoices that passed",
+      "Work through the 26 real dataset invoices and their checks",
+      "Ask for payments on invoices that passed",
     ],
     restriction: "Cannot approve payments or see Acme and Globex data",
   },
@@ -146,7 +146,7 @@ const PERSONA_DETAILS: Record<
     canDo: [
       "Approve payments up to $2,500",
     ],
-    restriction: "Refused on anything above $2,500",
+    restriction: "Can’t approve anything over $2,500",
   },
   "controller@harbor.test": {
     role: "Financial Controller",
@@ -230,47 +230,37 @@ function LoginForm() {
       <div className="min-h-screen grid lg:grid-cols-12">
         {/* Left column: Product context & value propositions */}
         <section
-          className="lg:col-span-7 xl:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r"
+          className="ink-panel lg:col-span-7 xl:col-span-7 flex flex-col justify-between px-5 py-10 sm:p-10 lg:p-14 border-t lg:border-t-0 lg:border-r"
           style={{ borderColor: "var(--border)" }}
         >
           <div className="space-y-8">
             {/* Header branding */}
             <div className="flex items-center gap-3">
-              <span
-                className="font-bold tracking-tight"
-                style={{ fontSize: "1.35rem", color: "var(--text)" }}
-              >
-                FinGuard
+              <span className="wordmark" style={{ fontSize: "1.6rem" }}>
+                FIN<span>GUARD</span>
               </span>
-              <span
-                className="text-xs px-2.5 py-0.5 rounded font-medium"
-                style={{
-                  background: "var(--accent-subtle)",
-                  color: "var(--accent)",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                Control &amp; Evidence Platform
-              </span>
+              <span className="stamp">Control &amp; Evidence</span>
             </div>
 
             {/* Hero statement */}
             <div className="space-y-3 max-w-2xl">
               <h1
-                className="font-semibold tracking-tight"
+                className="font-display uppercase"
                 style={{
-                  fontSize: "2rem",
-                  lineHeight: "1.25",
+                  fontSize: "clamp(2.6rem, 5.2vw, 4.4rem)",
+                  fontWeight: 900,
+                  lineHeight: 0.95,
                   color: "var(--text)",
                 }}
               >
-                Autonomous AI guardrails for financial operations.
+                Your AI can read the invoice.{" "}
+                <span className="block" style={{ color: "var(--accent)" }}>It can&rsquo;t move the money.</span>
               </h1>
               <p
                 className="text-sm leading-relaxed"
                 style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}
               >
-                FinGuard bridges AI document intelligence and financial execution. Every extracted field is human-confirmed, every rule is enforced via policy-as-code, and no payment moves without cryptographically verified maker-checker sign-off.
+                FinGuard sits between AI that reads your documents and the money you pay out. A person confirms every value the AI reads, your rules are checked automatically, and no payment goes out until a second person approves it.
               </p>
             </div>
 
@@ -281,16 +271,16 @@ function LoginForm() {
                 style={{ background: "var(--surface)" }}
               >
                 <div
-                  className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--accent)" }}
+                  className="text-xs uppercase tracking-wider"
+                  style={{ color: "var(--accent-text)" }}
                 >
                   Pillar 1
                 </div>
-                <h2 className="text-sm font-semibold" style={{ color: "var(--text)" }}>
-                  Human in the Loop
+                <h2 className="section-title" style={{ fontSize: "1.05rem" }}>
+                  A Person Checks
                 </h2>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-                  AI model output is strictly provisional. Extracted data requires operator verification before moving forward.
+                  What the AI reads is only a draft. A person confirms each value before anything else happens.
                 </p>
               </div>
 
@@ -299,16 +289,16 @@ function LoginForm() {
                 style={{ background: "var(--surface)" }}
               >
                 <div
-                  className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--accent)" }}
+                  className="text-xs uppercase tracking-wider"
+                  style={{ color: "var(--accent-text)" }}
                 >
                   Pillar 2
                 </div>
-                <h2 className="text-sm font-semibold" style={{ color: "var(--text)" }}>
+                <h2 className="section-title" style={{ fontSize: "1.05rem" }}>
                   Maker-Checker
                 </h2>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-                  Segregation of duties is hardcoded at the API boundary. The operator proposing a payment cannot approve it.
+                  The system won’t let the person who asks for a payment approve it too.
                 </p>
               </div>
 
@@ -317,16 +307,16 @@ function LoginForm() {
                 style={{ background: "var(--surface)" }}
               >
                 <div
-                  className="text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--accent)" }}
+                  className="text-xs uppercase tracking-wider"
+                  style={{ color: "var(--accent-text)" }}
                 >
                   Pillar 3
                 </div>
-                <h2 className="text-sm font-semibold" style={{ color: "var(--text)" }}>
-                  Cryptographic Audit
+                <h2 className="section-title" style={{ fontSize: "1.05rem" }}>
+                  A Record You Can Trust
                 </h2>
                 <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-                  Append-only event ledger with SHA-256 state digests. Export tamper-evident evidence packages on demand.
+                  Every step is saved in a log that can’t be edited. Export the evidence whenever you need it.
                 </p>
               </div>
             </div>
@@ -334,43 +324,43 @@ function LoginForm() {
 
           {/* Bottom metadata badges */}
           <div
-            className="pt-8 mt-8 border-t flex flex-wrap items-center gap-4 text-xs"
+            className="pt-8 mt-8 border-t border-dashed flex flex-wrap items-center gap-4 text-xs uppercase tracking-wider"
             style={{ borderColor: "var(--border-subtle)", color: "var(--muted)" }}
           >
             <span className="flex items-center gap-1.5">
               <span
                 className="inline-block w-2 h-2 rounded-full"
-                style={{ background: "var(--pass)" }}
+                style={{ background: "var(--pass)", boxShadow: "0 0 0 3px var(--pass-bg)" }}
               />
-              Synthetic Sandbox Active
+              Sample data only
             </span>
             <span>&bull;</span>
-            <span>7 Distinct RBAC Roles</span>
+            <span>7 roles</span>
             <span>&bull;</span>
-            <span>Versioned Policy Engine</span>
+            <span>Versioned rules</span>
             <span>&bull;</span>
-            <span>Zero-Trust Execution</span>
+            <span>Nothing paid without approval</span>
           </div>
         </section>
 
         {/* Right column: Interactive Persona Sign-In Console */}
         <section
-          className="lg:col-span-5 xl:col-span-5 flex flex-col justify-center p-6 sm:p-10 lg:p-12"
+          className="order-first lg:order-none lg:col-span-5 xl:col-span-5 flex flex-col justify-center px-5 py-8 sm:p-10 lg:p-12"
           style={{ background: "var(--bg)" }}
         >
           <div className="w-full max-w-md mx-auto space-y-6">
+            <span className="wordmark lg:hidden" style={{ fontSize: "1.5rem" }}>
+              FIN<span>GUARD</span>
+            </span>
             <div>
-              <h2
-                className="font-semibold tracking-tight"
-                style={{ fontSize: "1.35rem", color: "var(--text)" }}
-              >
-                Development Sign-In
+              <h2 className="page-title" style={{ fontSize: "2.1rem" }}>
+                Development sign-in
               </h2>
               <p
                 className="mt-1 text-xs"
                 style={{ color: "var(--text-secondary)", lineHeight: "1.5" }}
               >
-                Choose an identity below to test role-specific capabilities, policy checks, and approvals.
+                Pick a person to sign in as. Each one can do different things.
               </p>
             </div>
 
@@ -381,7 +371,7 @@ function LoginForm() {
                   style={{ color: "var(--muted)" }}
                   htmlFor="persona"
                 >
-                  Active Persona
+                  Sign in as
                 </label>
                 <select
                   id="persona"
@@ -429,9 +419,9 @@ function LoginForm() {
                   <div className="space-y-1.5 pt-1">
                     <div
                       className="text-xs font-medium uppercase tracking-wider"
-                      style={{ color: "var(--muted)", fontSize: "0.68rem" }}
+                      style={{ color: "var(--muted)", fontSize: "0.72rem" }}
                     >
-                      Granted Capabilities
+                      Can do
                     </div>
                     <ul className="space-y-1 text-xs" style={{ color: "var(--text-secondary)" }}>
                       {selectedDetails.canDo.map((item, idx) => (
@@ -482,7 +472,7 @@ function LoginForm() {
                 className="text-center text-xs"
                 style={{ color: "var(--muted)", fontSize: "0.72rem" }}
               >
-                Development authentication stub. Production deploys authenticate against OIDC / SAML identity providers.
+                Test sign-in only. A real deployment would use your company’s sign-in.
               </p>
             </div>
           </div>

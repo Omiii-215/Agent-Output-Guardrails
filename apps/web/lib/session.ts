@@ -14,7 +14,7 @@ export const PERSONAS = [
   { subject: "author@acme.test", label: "Policy author" },
   { subject: "publisher@acme.test", label: "Policy publisher" },
   { subject: "admin@acme.test", label: "Organization administrator" },
-  { subject: "operator@globex.test", label: "Globex operator (second tenant)" },
+  { subject: "operator@globex.test", label: "Globex operator (second company)" },
   { subject: "operator@harbor.test", label: "Harbor Lane operator (Hugging Face dataset, USD)" },
   { subject: "approver@harbor.test", label: "Harbor Lane approver ($50,000 limit)" },
   { subject: "approver2@harbor.test", label: "Harbor Lane approver ($2,500 limit)" },
