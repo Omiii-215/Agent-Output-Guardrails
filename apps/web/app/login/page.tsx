@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useSession } from "@/app/providers";
 import { api } from "@/lib/api";
 import { PERSONAS } from "@/lib/session";
@@ -180,9 +180,12 @@ function LoginForm() {
 
   const selectedDetails = PERSONA_DETAILS[subject] ?? PERSONA_DETAILS["operator@acme.test"];
 
+  // Sign in once per ?persona= link (from the website's buttons).
+  const autoSignedIn = useRef<string | null>(null);
   useEffect(() => {
     const personaParam = searchParams.get("persona");
-    if (!personaParam) return;
+    if (!personaParam || autoSignedIn.current === personaParam) return;
+    autoSignedIn.current = personaParam;
     const targetSubject = PERSONA_ALIAS_MAP[personaParam.toLowerCase()] ?? personaParam;
     if (targetSubject) {
       setSubject(targetSubject);

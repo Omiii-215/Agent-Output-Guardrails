@@ -99,7 +99,8 @@ export function Shell({ children }: { children: ReactNode }) {
   }, [path, session]);
 
   useEffect(() => {
-    if (ready && !session && !isPublic) router.replace("/login");
+    // Keep the query (for example ?persona=operator from the website) so sign-in can use it.
+    if (ready && !session && !isPublic) router.replace("/login" + window.location.search);
   }, [ready, session, isPublic, router]);
 
   if (path === "/login") return <>{children}</>;
