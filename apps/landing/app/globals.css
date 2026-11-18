@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @source "../app/**/*.{ts,tsx}";
 
-.font-900 { font-weight: 900; }
-.font-800 { font-weight: 800; }
 
 /* ── FinGuard Design Tokens (Tailwind v4 theme) ── */
 @theme {
@@ -24,71 +22,141 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
   background-color: var(--color-bone);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Paper Grain overlay ── */
-.paper-grain::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
-  background-repeat: repeat;
+/* ── Base typography ── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+    font-kerning: normal;
+  }
+  p, li, blockquote {
+    text-wrap: pretty;
+  }
+  code, kbd, samp, .font-mono {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "zero" 0, "calt" 1;
+  }
+  img, svg, video, canvas {
+    max-width: 100%;
+  }
 }
 
-/* ── Ledger ruled lines ── */
-.ledger-lines {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 31px,
-    var(--color-ledger) 31px,
-    var(--color-ledger) 32px
-  );
+/* ── Layout and type scale utilities ── */
+/* One page container so every section shares the nav's left and right edges. */
+@utility container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 64rem) {
+    padding-inline: 2.5rem;
+  }
 }
 
-/* ── Rubber stamp ── */
-.stamp {
-  display: inline-block;
-  font-family: var(--font-display);
+/* Fluid display sizes: smooth from phone to wide desktop, no jumps between breakpoints. */
+@utility display-hero {
+  font-size: clamp(3rem, 1.1rem + 7.4vw, 8.75rem);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+}
+@utility display-2xl {
+  font-size: clamp(2.75rem, 1.35rem + 5.6vw, 7rem);
+  line-height: 0.9;
+  letter-spacing: -0.005em;
+}
+@utility display-xl {
+  font-size: clamp(2.4rem, 1.5rem + 3.6vw, 4.75rem);
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+@utility display-lg {
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+  line-height: 0.95;
+}
+@utility font-900 {
   font-weight: 900;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.2em 0.55em;
-  border: 3px solid currentColor;
-  border-radius: 3px;
-  position: relative;
-  line-height: 1.4;
 }
-.stamp::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  opacity: 0.25;
+@utility font-800 {
+  font-weight: 800;
 }
-.stamp-vermilion { color: var(--color-vermilion); border-color: var(--color-vermilion); }
-.stamp-verify    { color: var(--color-verify);    border-color: var(--color-verify);    }
 
-/* ── Perforated edges ── */
-.perforated-top    { border-top:    3px dashed var(--color-ledger); }
-.perforated-bottom { border-bottom: 3px dashed var(--color-ledger); }
+/* ── Components (layered so utilities still win) ── */
+@layer components {
+  /* ── Paper Grain overlay ── */
+  .paper-grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 300px 300px;
+    background-repeat: repeat;
+  }
 
-/* ── Ticket clip-path card ── */
-.ticket-card {
-  clip-path: polygon(
-    0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%,
-    12px 100%, 0 calc(100% - 12px)
-  );
+  /* ── Ledger ruled lines ── */
+  .ledger-lines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 31px,
+      var(--color-ledger) 31px,
+      var(--color-ledger) 32px
+    );
+  }
+
+  /* ── Rubber stamp ── */
+  .stamp {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2em 0.55em;
+    border: 3px solid currentColor;
+    border-radius: 3px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .stamp::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    opacity: 0.25;
+  }
+  .stamp-vermilion { color: var(--color-vermilion); border-color: var(--color-vermilion); }
+  .stamp-verify    { color: var(--color-verify);    border-color: var(--color-verify);    }
+
+  /* ── Perforated edges ── */
+  .perforated-top    { border-top:    3px dashed var(--color-ledger); }
+  .perforated-bottom { border-bottom: 3px dashed var(--color-ledger); }
+
+  /* ── Ticket clip-path card ── */
+  .ticket-card {
+    clip-path: polygon(
+      0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%,
+      12px 100%, 0 calc(100% - 12px)
+    );
+  }
 }
 
 /* ── Selection colour ── */
