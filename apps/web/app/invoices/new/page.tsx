@@ -14,7 +14,7 @@ export default function NewInvoice() {
   const vendors = useQuery({ queryKey: ["vendors"], queryFn: () => api<Vendor[]>("/v1/vendors") });
   const [vendorId, setVendorId] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [fields, setFields] = useState<Record<string, string>>({ currency: "INR" });
+  const [fields, setFields] = useState<Record<string, string>>({});
   const [lines, setLines] = useState<Line[]>([]);
   // One key per form instance: resubmitting after a network error cannot create a second case.
   const [key] = useState(() => idempotencyKey("invoice"));
@@ -88,7 +88,7 @@ export default function NewInvoice() {
             {field("invoice_number", "Invoice number")}
             {field("invoice_date", "Invoice date", "YYYY-MM-DD")}
             {field("due_date", "Due date", "YYYY-MM-DD")}
-            {field("currency", "Currency")}
+            {field("currency", "Currency", "e.g. INR or USD")}
             {field("total", "Total", "5900.00")}
             {field("po_number", "PO number")}
           </div>
