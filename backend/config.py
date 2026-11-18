@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     # Owner credentials for migrations/seeding; the runtime URL must not own tables.
     database_admin_url: str | None = None
     object_store_path: Path = Path("var/objects")
+    # "database" keeps uploaded documents in PostgreSQL, for hosts without a shared disk.
+    object_store: Literal["local", "database"] = "local"
+    # Serverless hosts: one connection per request and no server-side prepared
+    # statements, so a transaction-pooling proxy (for example Neon's) works.
+    serverless_db: bool = False
 
     # Identity
     dev_identity_enabled: bool = True
@@ -63,6 +68,10 @@ class Settings(BaseSettings):
     # Jobs
     job_lease_seconds: int = 60
     job_max_attempts: int = 5
+    # Process queued jobs at the end of each API request instead of in a
+    # separate worker. For hosts that cannot run a long-lived worker process.
+    inline_jobs: bool = False
+    inline_jobs_max: int = Field(default=50, gt=0)
 
     # CORS for the web app
     web_origin: str = "http://localhost:3000"

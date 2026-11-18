@@ -6,7 +6,10 @@ services. Business state changes live in ``backend/``.
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
@@ -35,6 +38,9 @@ from backend.telemetry.tracing import (
     reset_trace_id,
     set_trace_id,
 )
+from backend.worker import run_once
+
+log = logging.getLogger("finguard.api")
 
 API_VERSION = "v1"
 
@@ -71,11 +77,31 @@ def create_app(settings: Settings | None = None, db: Database | None = None) -> 
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[settings.web_origin],
+        # One origin, or several separated by commas (one app served on several domains).
+        allow_origins=[o.strip() for o in settings.web_origin.split(",") if o.strip()],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    if settings.inline_jobs:
+        # No separate worker on this host: after each API call, process whatever
+        # that call (or an earlier one) queued, before answering. The client
+        # refetches after mutations, so it sees the result on its next read.
+        runtime = app.state.runtime
+
+        def drain() -> None:
+            try:
+                run_once(runtime, max_jobs=settings.inline_jobs_max)
+            except Exception:  # never fail the request because of queued work
+                log.exception("inline job processing failed")
+
+        @app.middleware("http")
+        async def inline_jobs_middleware(request: Request, call_next):
+            response = await call_next(request)
+            if request.method != "OPTIONS" and request.url.path.startswith(f"/{API_VERSION}/"):
+                await run_in_threadpool(drain)
+            return response
 
     @app.middleware("http")
     async def trace_middleware(request: Request, call_next):

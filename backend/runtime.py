@@ -28,11 +28,17 @@ class Runtime:
 
 
 def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
-    db = db or Database(settings.database_url, admin_url=settings.database_admin_url)
+    if db is None:
+        engine_kwargs = {}
+        if settings.serverless_db and settings.database_url.startswith("postgresql"):
+            from sqlalchemy.pool import NullPool
+
+            engine_kwargs = {"poolclass": NullPool, "connect_args": {"prepare_threshold": None}}
+        db = Database(settings.database_url, admin_url=settings.database_admin_url, **engine_kwargs)
     return Runtime(
         settings=settings,
         db=db,
-        objects=LocalObjectStore(settings.object_store_path),
+        objects=build_object_store(settings, db),
         grants=GrantSigner(settings.object_grant_secret, settings.object_grant_ttl_seconds),
         scanner=SignatureScanner(),
         cipher=FieldCipher(settings.field_encryption_key),
@@ -40,6 +46,14 @@ def build_runtime(settings: Settings, db: Database | None = None) -> Runtime:
         # Live connectors stay disabled until their release gate (ADR 0006).
         payments=SimulatedPaymentProvider(db, settings.simulator_webhook_secret),
     )
+
+
+def build_object_store(settings: Settings, db: Database) -> ObjectStore:
+    if settings.object_store == "database":
+        from backend.adapters.object_store.db_store import DatabaseObjectStore
+
+        return DatabaseObjectStore(db)
+    return LocalObjectStore(settings.object_store_path)
 
 
 def build_model_provider(settings: Settings) -> ModelProvider:

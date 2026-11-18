@@ -50,9 +50,10 @@ def make_engine(url: str, **kwargs: Any) -> Engine:
         engine = create_engine(url, connect_args={"check_same_thread": False}, **kwargs)
         _configure_sqlite(engine)
         return engine
-    kwargs.setdefault("pool_size", 10)
-    kwargs.setdefault("max_overflow", 5)
-    kwargs.setdefault("pool_pre_ping", True)
+    if "poolclass" not in kwargs:
+        kwargs.setdefault("pool_size", 10)
+        kwargs.setdefault("max_overflow", 5)
+        kwargs.setdefault("pool_pre_ping", True)
     return create_engine(url, **kwargs)
 
 
