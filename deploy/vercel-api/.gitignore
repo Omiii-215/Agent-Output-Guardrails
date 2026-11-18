@@ -1,0 +1,6 @@
+# Filled by scripts/build_vercel_api.py before each deploy.
+/apps/
+/backend/
+/requirements.txt
+.vercel
+.env*
