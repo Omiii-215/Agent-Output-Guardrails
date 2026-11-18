@@ -4,6 +4,14 @@ FinGuard is a working name. This repository implements the first release describ
 
 > Status: prototype on synthetic data. No live provider integration, deployment, customer or performance result is claimed. Payments run against a simulator.
 
+## Live demo
+
+- Website: https://finguard-website-ten.vercel.app
+- Dashboard: https://finguard-dashboard.vercel.app (opens on the sign-in page; pick a persona)
+- API: https://finguard-api-iota.vercel.app (`/healthz`, `/v1/meta`)
+
+Hosted free on Vercel with Neon PostgreSQL, demo data only, test sign-in. The website and dashboard redeploy on every push to `main`; the API is deployed from [deploy/vercel-api](deploy/vercel-api/README.md).
+
 ## What it does
 
 ```text

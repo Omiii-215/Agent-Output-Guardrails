@@ -178,7 +178,7 @@ export default function ModulesWall() {
             </p>
           </div>
           <a
-            href={`${DASHBOARD_URL}/modules?persona=operator`}
+            href={`${DASHBOARD_URL}/login`}
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded bg-ink text-bone hover:bg-vermilion transition-colors whitespace-nowrap"

@@ -34,7 +34,8 @@ export default function CtaButton({
   const ref = useRef<HTMLAnchorElement>(null);
   useMagnetic(ref as React.RefObject<HTMLElement | null>);
 
-  const href = `${DASHBOARD_URL}${persona ? `?persona=${persona}` : "?persona=operator"}`;
+  // Without a persona the visitor lands on the sign-in page and picks who to be.
+  const href = `${DASHBOARD_URL}/login${persona ? `?persona=${persona}` : ""}`;
 
   return (
     <a

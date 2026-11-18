@@ -61,7 +61,7 @@ export default function PersonaPicker() {
                 </p>
               </div>
               <a
-                href={`${DASHBOARD_URL}?persona=${persona.id}`}
+                href={`${DASHBOARD_URL}/login?persona=${persona.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-mono text-xs uppercase text-vermilion hover:text-ink transition-colors inline-flex items-center gap-1"
