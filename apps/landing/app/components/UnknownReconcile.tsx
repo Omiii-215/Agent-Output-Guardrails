@@ -76,35 +76,34 @@ export default function UnknownReconcile() {
   const showSettled = phaseIndex >= 5 || isDone;
 
   return (
-    <section ref={ref} className="relative bg-carbon py-24 md:py-32 px-6 overflow-hidden">
+    <section ref={ref} className="relative bg-carbon py-24 md:py-32 overflow-hidden">
       {/* Section number */}
-      <div className="absolute top-8 left-8 text-bone/10 font-display text-[8rem] md:text-[12rem] leading-none select-none pointer-events-none">
+      <div aria-hidden="true" className="hidden lg:block absolute top-8 left-8 text-bone/10 font-display text-[8rem] md:text-[12rem] leading-none select-none pointer-events-none">
         04
       </div>
 
-      <div className="relative z-10 max-w-5xl mx-auto">
+      <div className="container-page relative z-10">
         {/* Title */}
-        <h2 className="font-display font-900 text-5xl md:text-7xl uppercase text-bone mb-6">
+        <h2 className="font-display font-900 display-xl uppercase text-bone mb-6">
           UNKNOWN? NEVER RESEND.
         </h2>
 
         {/* Subtitle */}
-        <p className="font-body text-lg text-bone opacity-80 mb-20 max-w-2xl">
-          When a payment response is lost, we check status. We never fire a
-          second arrow.
+        <p className="font-body text-lg text-bone opacity-80 mb-14 md:mb-20 max-w-2xl">
+          When a payment response is lost, we check status. We never send it twice.
         </p>
 
         {/* Diagram */}
         <div className="relative max-w-3xl mx-auto">
           {/* Boxes and line */}
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Left box */}
-            <div className="border border-bone/30 rounded p-4 font-mono text-sm text-bone bg-carbon min-w-[140px] md:min-w-[180px] text-center shrink-0">
+            <div className="border border-bone/30 rounded px-2 py-3 sm:p-4 font-mono text-xs sm:text-sm leading-snug text-bone bg-carbon w-[29%] sm:w-auto sm:min-w-[180px] text-center shrink-0">
               Payment Service
             </div>
 
             {/* Connection line area */}
-            <div className="relative flex-1 h-16">
+            <div className="relative flex-1 min-w-0 h-16">
               {/* The line */}
               <svg
                 className="absolute inset-0 w-full h-full"
@@ -156,7 +155,7 @@ export default function UnknownReconcile() {
 
               {/* Response lost label */}
               {responseLost && (
-                <div className="absolute top-[34px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+                <div className="absolute top-[52px] sm:top-[34px] left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 sm:bg-carbon sm:px-1.5">
                   <span className="static-flicker text-vermilion font-mono text-xs whitespace-nowrap">
                     Response lost
                   </span>
@@ -165,7 +164,7 @@ export default function UnknownReconcile() {
             </div>
 
             {/* Right box */}
-            <div className="border border-bone/30 rounded p-4 font-mono text-sm text-bone bg-carbon min-w-[140px] md:min-w-[180px] text-center shrink-0">
+            <div className="border border-bone/30 rounded px-2 py-3 sm:p-4 font-mono text-xs sm:text-sm leading-snug text-bone bg-carbon w-[29%] sm:w-auto sm:min-w-[180px] text-center shrink-0">
               Bank Gateway
             </div>
           </div>

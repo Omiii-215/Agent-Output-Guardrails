@@ -14,10 +14,10 @@ export default function PersonaPicker() {
       ref={ref as React.RefObject<HTMLElement>}
       className="bg-carbon text-bone py-20 md:py-28 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="container-page">
         {/* Title */}
         <h2
-          className={`font-display font-[900] text-5xl md:text-7xl uppercase text-center mb-4 transition-all duration-700 ${
+          className={`font-display font-[900] display-xl uppercase text-center mb-4 transition-all duration-700 ${
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
@@ -28,7 +28,7 @@ export default function PersonaPicker() {
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          Five roles. Five views. Same evidence trail.
+          Five roles. Five views. One shared record.
         </p>
 
         {/* Ticket Cards */}

@@ -118,21 +118,21 @@ export default function Hero() {
           {/* Headline */}
           <h1 className="font-display font-900 uppercase leading-[0.9] tracking-tight text-ink">
             <span
-              className={`block text-5xl md:text-7xl lg:text-8xl xl:text-9xl headline-reveal ${revealed ? "is-visible" : ""}`}
+              className={`block display-hero headline-reveal ${revealed ? "is-visible" : ""}`}
             >
               YOUR AI CAN READ THE INVOICE.
             </span>
             <span
-              className={`block text-5xl md:text-7xl lg:text-8xl xl:text-9xl mt-1 md:mt-2 headline-reveal-delayed ${revealed ? "is-visible" : ""}`}
+              className={`block display-hero mt-1 md:mt-2 headline-reveal-delayed ${revealed ? "is-visible" : ""}`}
             >
-              IT <span className="text-vermilion">CAN&rsquo;T</span> MOVE THE
-              MONEY.
+              IT <span className="text-vermilion">CAN&rsquo;T</span>{" "}
+              <span className="whitespace-nowrap">MOVE THE</span> MONEY.
             </span>
           </h1>
 
           {/* Subline */}
           <p
-            className={`font-accent italic text-xl md:text-2xl max-w-2xl mx-auto mt-6 md:mt-8 opacity-80 text-ink subline-fade ${revealed ? "is-visible" : ""}`}
+            className={`font-accent italic text-[1.3rem] leading-snug md:text-2xl max-w-xl mx-auto mt-6 md:mt-8 opacity-80 text-ink subline-fade ${revealed ? "is-visible" : ""}`}
           >
             FinGuard puts evidence and a second pair of eyes between AI and
             every payment.

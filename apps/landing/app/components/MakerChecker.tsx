@@ -84,15 +84,15 @@ export default function MakerChecker() {
   const digestLocked = phaseIndex >= 7 || isDone;
 
   return (
-    <section ref={ref} className="relative bg-bone py-24 md:py-32 px-6">
+    <section ref={ref} className="relative bg-bone py-24 md:py-32 overflow-hidden">
       {/* Section number */}
-      <div className="absolute top-8 left-8 text-ledger/20 font-display text-[8rem] md:text-[12rem] leading-none select-none pointer-events-none">
+      <div aria-hidden="true" className="hidden lg:block absolute top-8 left-8 text-ledger/20 font-display text-[8rem] md:text-[12rem] leading-none select-none pointer-events-none">
         03
       </div>
 
-      <div className="relative z-10 max-w-6xl mx-auto">
+      <div className="container-page relative z-10">
         {/* Title */}
-        <h2 className="font-display font-900 text-5xl md:text-7xl uppercase text-ink mb-6">
+        <h2 className="font-display font-900 display-xl uppercase text-ink mb-6">
           THE PERSON WHO PROPOSES{" "}
           <span className="text-vermilion">CAN&rsquo;T</span> APPROVE.
         </h2>
@@ -148,13 +148,13 @@ export default function MakerChecker() {
             {/* Denied stamp */}
             {showDeniedStamp && (
               <div
-                className={`stamp stamp-vermilion absolute inset-0 flex items-center justify-center ${
+                className={`mt-6 flex justify-start pointer-events-none lg:mt-0 lg:absolute lg:right-6 lg:bottom-6 ${
                   !prefersReducedMotion && phase === "stamp-denied"
                     ? "stamp-slam"
                     : ""
                 }`}
               >
-                <div className="border-4 border-vermilion text-vermilion font-display font-900 uppercase text-xl md:text-2xl px-6 py-3 -rotate-12 bg-bone/90 rounded text-center leading-tight">
+                <div className="border-4 border-vermilion text-vermilion font-display font-900 uppercase text-xl md:text-2xl px-6 py-3 -rotate-6 bg-bone/90 rounded text-center leading-tight">
                   INDEPENDENT
                   <br />
                   APPROVAL REQUIRED
@@ -204,7 +204,7 @@ export default function MakerChecker() {
             {/* Approved stamp */}
             {showApprovedStamp && (
               <div
-                className={`stamp stamp-verify absolute inset-0 flex items-center justify-center ${
+                className={`mt-6 flex justify-start pointer-events-none lg:mt-0 lg:absolute lg:right-6 lg:bottom-6 ${
                   !prefersReducedMotion && phase === "stamp-approved"
                     ? "stamp-slam"
                     : ""

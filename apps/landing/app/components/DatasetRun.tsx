@@ -54,15 +54,15 @@ export default function DatasetRun() {
   const count = useCountUp(26, 1500, inView, prefersReduced);
 
   return (
-    <section ref={ref} className="bg-carbon text-bone py-24 md:py-32 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section ref={ref} className="bg-carbon text-bone py-24 md:py-32">
+      <div className="container-page">
         {/* Section number */}
         <span className="font-mono text-sm text-bone/30 tracking-widest">
           06
         </span>
 
         {/* Heading */}
-        <h2 className="font-display font-900 text-5xl md:text-7xl uppercase text-bone mt-4 leading-[0.95]">
+        <h2 className="font-display font-900 display-xl uppercase text-bone mt-4">
           TESTED ON REAL DATA.
           <br />
           MISTAKES INCLUDED.

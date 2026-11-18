@@ -136,17 +136,17 @@ export default function Pipeline() {
         className="sticky top-0 h-screen overflow-hidden flex flex-col"
       >
         {/* ── Header ── */}
-        <div className="relative px-6 md:px-12 pt-12 md:pt-16 pb-6 md:pb-8 flex-shrink-0">
+        <div className="container-page relative pt-20 md:pt-24 pb-6 md:pb-8 flex-shrink-0">
           {/* Large background numeral */}
           <span
-            className="absolute top-4 left-4 md:top-6 md:left-10 font-display font-900 text-ledger text-[120px] md:text-[200px] leading-none select-none pointer-events-none"
+            className="hidden lg:block absolute top-6 left-2 font-display font-900 text-ledger/60 text-[200px] leading-none select-none pointer-events-none"
             aria-hidden="true"
           >
             01
           </span>
 
           <div className="relative z-10">
-            <h2 className="font-display font-900 text-6xl md:text-8xl uppercase text-ink leading-none">
+            <h2 className="font-display font-900 display-2xl uppercase text-ink">
               How It Works
             </h2>
             <p className="font-accent italic text-lg md:text-xl text-ink/70 mt-2 md:mt-3">
@@ -156,7 +156,7 @@ export default function Pipeline() {
 
           {/* ── Digest hash display ── */}
           <div className="relative z-10 mt-4 md:mt-5 flex items-center gap-3">
-            <code className="font-mono text-sm text-ink/60 tracking-wide">
+            <code className="font-mono text-xs sm:text-sm text-ink/60 tracking-wide break-all">
               sha256:
               {digestHash.split("").map((char, i) => (
                 <span
@@ -180,7 +180,7 @@ export default function Pipeline() {
                   : "opacity-0 text-verify -translate-x-2"
               }`}
             >
-              🔒 DIGEST LOCKED
+              🔒 DETAILS LOCKED
             </span>
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function Pipeline() {
                   {isActive && (
                     <div className="mt-4 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-vermilion" />
-                      <span className="font-mono text-[10px] text-vermilion uppercase tracking-widest">
+                      <span className="font-mono text-[11px] text-vermilion uppercase tracking-widest">
                         Active
                       </span>
                     </div>
@@ -287,7 +287,7 @@ export default function Pipeline() {
                   {isPast && (
                     <div className="mt-4 flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-verify" />
-                      <span className="font-mono text-[10px] text-verify uppercase tracking-widest">
+                      <span className="font-mono text-[11px] text-verify uppercase tracking-widest">
                         Passed
                       </span>
                     </div>
@@ -352,7 +352,7 @@ export default function Pipeline() {
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{stage.icon}</span>
                         <div>
-                          <span className="font-mono text-[10px] text-ink/30 uppercase tracking-widest">
+                          <span className="font-mono text-[11px] text-ink/30 uppercase tracking-widest">
                             Gate {String(i + 1).padStart(2, "0")}
                           </span>
                           <h3

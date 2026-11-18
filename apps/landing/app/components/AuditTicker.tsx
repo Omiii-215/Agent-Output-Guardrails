@@ -97,13 +97,13 @@ export default function AuditTicker() {
 
   return (
     <section className="bg-bone py-20 md:py-28 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <div className="container-page">
         {/* Title */}
-        <h2 className="font-display font-[900] text-5xl md:text-7xl uppercase text-center text-ink mb-4">
-          Every step. Every hash. Forever.
+        <h2 className="font-display font-[900] display-xl uppercase text-center text-ink mb-4">
+          Every step. Recorded. Forever.
         </h2>
         <p className="font-accent italic text-xl text-center text-ink/70 mb-12 md:mb-16">
-          Append-only. Chained hashes. Sealed on export.
+          Nothing is edited or deleted. Each entry links to the last. Sealed when exported.
         </p>
       </div>
 

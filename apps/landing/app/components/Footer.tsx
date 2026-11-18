@@ -8,8 +8,8 @@ export default function Footer() {
       {/* Ledger line separator */}
       <div className="h-px bg-bone/10" />
 
-      <div className="py-12 px-4 md:px-8">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+      <div className="py-12">
+        <div className="container-page flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
           {/* Left: Wordmark */}
           <div className="text-center md:text-left">
             <span className="font-display font-[900] tracking-widest text-bone/40 text-xl">

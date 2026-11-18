@@ -23,7 +23,7 @@ export default function Nav() {
         scrolled ? "shadow-[0_2px_12px_rgba(12,12,13,0.08)]" : "shadow-none",
       ].join(" ")}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-8">
+      <div className="container-page flex items-center justify-between gap-4 py-3">
         {/* Wordmark */}
         <a href="#" className="font-display text-xl font-black tracking-widest text-ink select-none">
           FIN<span className="text-vermilion">GUARD</span>
@@ -35,16 +35,17 @@ export default function Nav() {
             The Problem
           </a>
           <a href="#capital-interceptor" className="hover:text-vermilion transition-colors">
-            Capital Transit
+            See It Work
           </a>
           <a href="#architecture" className="hover:text-vermilion transition-colors">
-            3 Control Layers
+            How It’s Built
           </a>
           <a href="#how-it-works" className="hover:text-vermilion transition-colors">
-            Pipeline
+            Step by Step
+
           </a>
           <a href="#simulator" className="hover:text-vermilion transition-colors">
-            Live Sandbox
+            Try It
           </a>
           <a href="#guarantees" className="hover:text-vermilion transition-colors">
             Guarantees

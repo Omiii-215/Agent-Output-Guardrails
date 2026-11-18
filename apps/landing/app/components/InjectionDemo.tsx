@@ -45,16 +45,16 @@ export default function InjectionDemo() {
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
-      className="relative bg-carbon text-bone py-24 md:py-32 px-4 overflow-hidden"
+      className="relative bg-carbon text-bone py-24 md:py-32 overflow-hidden"
     >
       {/* Section number */}
-      <div className="absolute top-6 left-6 md:top-10 md:left-10 text-ledger/20 font-mono text-8xl md:text-9xl font-black select-none pointer-events-none">
+      <div aria-hidden="true" className="hidden lg:block absolute top-10 left-10 text-ledger/20 font-mono text-8xl md:text-9xl font-black select-none pointer-events-none">
         02
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="container-page relative z-10 text-center">
         {/* Title */}
-        <h2 className="font-display font-black text-4xl sm:text-5xl md:text-7xl uppercase leading-[0.95] tracking-tight mb-4">
+        <h2 className="font-display font-black display-xl uppercase mb-5">
           We Read The Fine Print.
           <br />
           And The Invisible Print.
@@ -62,7 +62,7 @@ export default function InjectionDemo() {
 
         {/* Subtitle */}
         <p className="font-body text-lg opacity-80 max-w-xl mx-auto mb-12 md:mb-16">
-          Embedded instructions inside documents get flagged. Every time.
+          Hidden instructions in documents get caught. Every time.
         </p>
 
         {/* Invoice Card */}
@@ -86,7 +86,7 @@ export default function InjectionDemo() {
 
             {/* From */}
             <div className="mb-6">
-              <span className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
+              <span className="font-mono text-[11px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
                 From
               </span>
               <span className="font-body text-sm sm:text-base font-medium">
@@ -96,7 +96,7 @@ export default function InjectionDemo() {
 
             {/* Description */}
             <div className="mb-6">
-              <span className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
+              <span className="font-mono text-[11px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
                 Description
               </span>
               <span className="font-body text-sm sm:text-base">
@@ -106,7 +106,7 @@ export default function InjectionDemo() {
 
             {/* Amount */}
             <div className="mb-6">
-              <span className="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
+              <span className="font-mono text-[11px] sm:text-xs uppercase tracking-wider text-ink/40 block mb-1">
                 Amount
               </span>
               <span className="font-display text-2xl sm:text-3xl font-black tracking-tight">
@@ -125,7 +125,7 @@ export default function InjectionDemo() {
             {/* Hidden malicious text */}
             <div className="relative py-2 my-1">
               <p
-                className={`font-mono text-[9px] sm:text-xs leading-relaxed transition-colors duration-500 ${
+                className={`font-mono text-[10.5px] sm:text-xs leading-relaxed transition-colors duration-500 ${
                   scanComplete
                     ? "text-vermilion line-through decoration-vermilion decoration-2"
                     : "text-bone"
@@ -137,13 +137,13 @@ export default function InjectionDemo() {
 
               {/* Flagged stamp */}
               <span
-                className={`stamp stamp-vermilion absolute -right-1 sm:right-0 top-1/2 -translate-y-1/2 transition-all duration-300 ${
+                className={`stamp stamp-vermilion mt-2 inline-block origin-left -rotate-2 transition-all duration-300 ${
                   scanComplete
                     ? "opacity-100 scale-100"
                     : "opacity-0 scale-75"
                 }`}
               >
-                EMBEDDED INSTRUCTION FLAGGED
+                HIDDEN INSTRUCTION FLAGGED
               </span>
             </div>
 
@@ -176,9 +176,7 @@ export default function InjectionDemo() {
 
         {/* Explainer */}
         <p className="font-body text-sm text-bone/70 max-w-md mx-auto mt-8 leading-relaxed">
-          Documents can contain hidden instructions that try to hijack AI
-          extraction. FinGuard scans for embedded instructions and flags them
-          before any data leaves quarantine.
+          Documents can hide instructions meant to trick the AI. FinGuard looks for them and flags them before anything is read from the file.
         </p>
       </div>
 
