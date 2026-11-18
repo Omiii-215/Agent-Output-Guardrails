@@ -48,7 +48,7 @@ export default function Audit() {
     <div className="space-y-5">
       <div>
         <h1 className="page-title">Audit</h1>
-        <p className="page-description mt-1">Append-only event log and purpose-scoped evidence exports.</p>
+        <p className="page-description mt-1">A log of everything that happened, which can’t be edited. Export evidence for a stated reason.</p>
       </div>
       <Section title="Evidence export">
         <form
@@ -93,9 +93,9 @@ export default function Audit() {
             <thead>
               <tr>
                 <th>When</th>
-                <th>Actor</th>
+                <th>Who</th>
                 <th>Action</th>
-                <th>Object</th>
+                <th>Item</th>
                 <th>Reason</th>
               </tr>
             </thead>

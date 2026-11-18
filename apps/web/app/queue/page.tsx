@@ -39,7 +39,7 @@ export default function Queue() {
     <div className="space-y-5">
       <div>
         <h1 className="page-title">Review queue</h1>
-        <p className="page-description mt-1">All cases across modules. Filter by status or module to narrow the list.</p>
+        <p className="page-description mt-1">Everything waiting for someone. Filter by status or type of work.</p>
       </div>
       <div className="flex flex-wrap gap-3">
         <label className="text-sm font-medium">

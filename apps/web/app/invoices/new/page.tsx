@@ -52,7 +52,7 @@ export default function NewInvoice() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold">New invoice</h1>
+      <h1 className="page-title">New invoice</h1>
       <form
         className="space-y-4"
         onSubmit={(e) => {
@@ -73,7 +73,7 @@ export default function NewInvoice() {
             </select>
           </label>
           <label className="block text-sm">
-            Invoice document (PDF). Its text is extracted and every value must be confirmed by a person.
+            Invoice document (PDF). The AI reads it, then a person confirms every value.
             <input type="file" accept="application/pdf,text/plain" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           </label>
           {vendorId ? (
@@ -89,7 +89,7 @@ export default function NewInvoice() {
             {field("invoice_date", "Invoice date", "YYYY-MM-DD")}
             {field("due_date", "Due date", "YYYY-MM-DD")}
             {field("currency", "Currency")}
-            {field("total", "Total (major units)", "5900.00")}
+            {field("total", "Total", "5900.00")}
             {field("po_number", "PO number")}
           </div>
           <div className="space-y-2">

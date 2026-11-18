@@ -58,7 +58,7 @@ export default function Reconciliation() {
     <div className="space-y-5">
       <div>
         <h1 className="page-title">Reconciliation</h1>
-        <p className="page-description mt-1">Import bank and ledger records, review proposed matches, and resolve exceptions.</p>
+        <p className="page-description mt-1">Import bank and ledger records, check the suggested matches, and sort out anything that doesn’t match.</p>
       </div>
       <Section title="Import records" actions={<button className="btn text-sm" onClick={downloadExport}>Export approved results</button>}>
         <form
@@ -87,7 +87,7 @@ export default function Reconciliation() {
             <input type="file" accept=".csv,text/csv" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           </label>
           <label className="text-sm font-medium sm:row-span-2">
-            Column mapping (JSON)
+            Which column is which (JSON)
             <textarea rows={6} className="mono" value={mapping} onChange={(e) => setMapping(e.target.value)} />
           </label>
           <button className="btn btn-primary self-start" disabled={upload.isPending}>
@@ -107,8 +107,8 @@ export default function Reconciliation() {
         </ul>
       </Section>
 
-      <Section title="Proposed exact matches">
-        <p className="page-description">Only one-to-one matches with the same reference, signed amount and currency are proposed.</p>
+      <Section title="Suggested matches">
+        <p className="page-description">Only pairs with the same reference, amount and currency are suggested.</p>
         <div className="overflow-x-auto">
           <table className="text-sm">
             <thead>
@@ -153,7 +153,7 @@ export default function Reconciliation() {
         <ErrorNote error={decide.error} />
       </Section>
 
-      <Section title="Exceptions needing review">
+      <Section title="Items that don’t match">
         <ul className="space-y-1 text-sm">
           {(exceptions.data ?? []).map((e) => (
             <li key={e.id}>

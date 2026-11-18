@@ -39,7 +39,7 @@ export default function CasePage({ params }: { params: Promise<{ id: string }> }
   return (
     <div className="space-y-4">
       <header className="space-y-1">
-        <h1 className="text-xl font-bold">{c.title}</h1>
+        <h1 className="page-title" style={{ fontSize: "2.1rem" }}>{c.title}</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="muted">Progress</span> <Status value={c.status} />
           <span className="muted">Latest outcome</span> <Status value={c.outcome} />
@@ -134,7 +134,7 @@ function InvoicePanel({ d, onChange, canWrite, canEvaluate }: { d: Detail; onCha
           "none on record"
         )}
       </p>
-      <table>
+      <div className="table-wrap"><table>
         <thead>
           <tr>
             <th scope="col">Field</th>
@@ -179,11 +179,11 @@ function InvoicePanel({ d, onChange, canWrite, canEvaluate }: { d: Detail; onCha
             );
           })}
         </tbody>
-      </table>
+      </table></div>
       {inv.lines?.length ? (
         <details>
           <summary className="cursor-pointer text-sm">{inv.lines.length} line items</summary>
-          <table className="mt-2 text-sm">
+          <div className="table-wrap"><table className="mt-2 text-sm">
             <thead>
               <tr>
                 <th>Description</th>
@@ -202,7 +202,7 @@ function InvoicePanel({ d, onChange, canWrite, canEvaluate }: { d: Detail; onCha
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </details>
       ) : null}
       {editable && (Object.keys(edits).length > 0 || verify.length > 0) ? (
@@ -242,7 +242,7 @@ function FindingsPanel({ d, onChange, canResolve }: { d: Detail; onChange: () =>
       </p>
       {ev.explanation ? (
         <p className="text-sm">
-          <span className="muted">AI-generated summary of the findings below (advisory): </span>
+          <span className="muted">AI summary of the checks below (for guidance only): </span>
           {ev.explanation}
         </p>
       ) : null}
@@ -326,7 +326,7 @@ function PaymentPanel({ d, onChange, can }: { d: Detail; onChange: () => void; c
               {p.maker_actor_type === "service" ? " (agent)" : ""}
             </div>
             {p.state_reason ? <p className="muted text-xs">{p.state_reason}</p> : null}
-            <p className="mono muted">digest {p.digest}</p>
+            <p className="mono muted">fingerprint {p.digest}</p>
             {p.preflight?.findings
               ?.filter((f: any) => f.effect)
               .map((f: any) => (
@@ -368,7 +368,7 @@ function PaymentPanel({ d, onChange, can }: { d: Detail; onChange: () => void; c
                         );
                     }}
                   >
-                    Approve exact payload
+                    Approve this exact payment
                   </button>
                   <button
                     className="btn"
@@ -400,7 +400,7 @@ function PaymentPanel({ d, onChange, can }: { d: Detail; onChange: () => void; c
                     )
                   }
                 >
-                  Execute (simulated)
+                  Pay (simulated)
                 </button>
               ) : null}
             </div>
@@ -423,7 +423,7 @@ function IntentView({ intent, canOperate, onChange }: { intent: any; canOperate:
       <div>
         Execution <Status value={intent.execution.state} /> {intent.execution.reason}
       </div>
-      <div className="mono muted">provider key {intent.provider.idempotency_key}</div>
+      <div className="mono muted">payment ID {intent.provider.idempotency_key}</div>
       <ul className="text-xs">
         {intent.provider.history.map((h: any, i: number) => (
           <li key={i}>
@@ -433,12 +433,12 @@ function IntentView({ intent, canOperate, onChange }: { intent: any; canOperate:
       </ul>
       {canOperate && intent.execution.state === "ACCEPTED" ? (
         <div className="flex gap-2">
-          <span className="muted text-xs">Simulator console:</span>
+          <span className="muted text-xs">Simulate the bank’s reply:</span>
           <button className="btn text-xs" onClick={() => advance.mutate("SETTLED")}>
-            Provider settles
+            Bank confirms payment
           </button>
           <button className="btn text-xs" onClick={() => advance.mutate("FAILED")}>
-            Provider fails
+            Bank rejects payment
           </button>
         </div>
       ) : null}
@@ -469,7 +469,7 @@ function ExceptionPanel({ d, onChange, canResolve }: { d: Detail; onChange: () =
   return (
     <Section title={`Reconciliation exception: ${d.exception.kind.replaceAll("_", " ").toLowerCase()}`}>
       {d.exception.details?.hint ? <p className="text-sm">{d.exception.details.hint}</p> : null}
-      <table className="text-sm">
+      <div className="table-wrap"><table className="text-sm">
         <thead>
           <tr>
             <th>Side</th>
@@ -477,11 +477,11 @@ function ExceptionPanel({ d, onChange, canResolve }: { d: Detail; onChange: () =
             <th>Reference</th>
             <th>Date</th>
             <th>Amount</th>
-            <th>Lineage</th>
+            <th>Source file</th>
           </tr>
         </thead>
         <tbody>{[d.transaction, ...d.counterparts].map(row)}</tbody>
-      </table>
+      </table></div>
       {d.exception.state === "OPEN" && canResolve ? (
         <form
           className="grid gap-2 sm:grid-cols-3"
@@ -503,7 +503,7 @@ function ExceptionPanel({ d, onChange, canResolve }: { d: Detail; onChange: () =
             <input required minLength={3} value={note} onChange={(e) => setNote(e.target.value)} />
           </label>
           <button className="btn btn-primary" disabled={resolve.isPending}>
-            Record disposition
+            Save decision
           </button>
         </form>
       ) : (

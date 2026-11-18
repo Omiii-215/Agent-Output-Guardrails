@@ -27,7 +27,7 @@ export default function Policies() {
       <div>
         <h1 className="page-title">Policies</h1>
         <p className="page-description mt-1">
-          Policies select reviewed rules with bounded parameters. Drafts are validated against regression scenarios and need an independent publisher.
+          Policies are your business rules, with set limits. Every draft is tested against saved examples, and a different person has to publish it.
         </p>
       </div>
       <Section title="Versions">
@@ -37,7 +37,7 @@ export default function Policies() {
               <tr>
                 <th>Policy</th>
                 <th>Version</th>
-                <th>Lifecycle</th>
+                <th>Status</th>
                 <th>Author</th>
                 <th>Publisher</th>
               </tr>

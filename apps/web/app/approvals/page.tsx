@@ -13,7 +13,7 @@ export default function Approvals() {
       <div>
         <h1 className="page-title">Approvals waiting</h1>
         <p className="page-description mt-1">
-          Each request is bound to one exact payload digest. Changing amount, payee or purpose creates a new proposal that needs new approval.
+          Each request covers one exact payment. If the amount, payee or purpose changes, it becomes a new request that needs a new approval.
         </p>
       </div>
       <ErrorNote error={pending.error} />
