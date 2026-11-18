@@ -66,7 +66,7 @@ export default function HowItWorks() {
           <Step
             number={7}
             title="The payment is made"
-            description="Only after approval does the system send the payment. In this prototype the payment is simulated; a real setup would send it to your bank. The result (paid or failed) is recorded."
+            description="Only after approval does the system send the payment. In this dashboard the payment is simulated; a real setup would send it to your bank. The result (paid or failed) is recorded."
           />
           <Step
             number={8}

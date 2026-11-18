@@ -162,7 +162,7 @@ export function Shell({ children }: { children: ReactNode }) {
       </nav>
       <main id="main" className="page-content flex-1 space-y-5">
         <div className="notice-banner notice-banner--info">
-          <span className="stamp" style={{ flexShrink: 0 }}>Prototype</span>
+          <span className="stamp" style={{ flexShrink: 0 }}>Dashboard</span>
           <span>This runs on sample data and payments are simulated. No real bank or customer data is connected.</span>
         </div>
         {children}

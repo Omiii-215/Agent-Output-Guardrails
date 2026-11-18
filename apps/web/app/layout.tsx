@@ -5,7 +5,7 @@ import { Shell } from "@/components/Shell";
 
 export const metadata: Metadata = {
   title: "FinGuard — Dashboard",
-  description: "Evidence and control platform for AI-assisted financial work (prototype).",
+  description: "FinGuard dashboard: evidence and control for AI-assisted financial work.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
