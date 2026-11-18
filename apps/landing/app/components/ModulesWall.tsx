@@ -42,12 +42,12 @@ function ModuleCard({
     >
       {/* Top Header */}
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2.5">
             <span className="font-display font-[900] text-3xl text-ink leading-none">
               {module.code}
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-wider text-ink/40 bg-bone px-2 py-0.5 rounded border border-ledger">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-ink/40 bg-bone px-2 py-0.5 rounded border border-ledger">
               {module.category}
             </span>
           </div>
@@ -63,24 +63,24 @@ function ModuleCard({
         </h3>
 
         {/* Detail */}
-        <p className="font-body text-xs text-ink/70 mt-2.5 leading-relaxed">
+        <p className="font-body text-sm text-ink/70 mt-2.5 leading-relaxed">
           {module.detail}
         </p>
       </div>
 
       {/* Invariant Verification Checks */}
       <div className="mt-5 pt-4 border-t border-ledger/40">
-        <span className="font-mono text-[10px] text-ink/40 uppercase tracking-widest block mb-2">
-          Deterministic Invariants
+        <span className="font-mono text-[11px] text-ink/40 uppercase tracking-widest block mb-2">
+          Built-in checks
         </span>
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-1 gap-1.5">
           {module.checks.map((check, i) => (
             <div
               key={i}
-              className="flex items-center gap-1.5 font-mono text-[11px] text-ink/80"
+              className="flex items-start gap-1.5 font-mono text-[11.5px] text-ink/80"
             >
-              <ShieldCheckIcon className="text-verify shrink-0 w-3.5 h-3.5" />
-              <span className="truncate">{check}</span>
+              <ShieldCheckIcon className="text-verify shrink-0 w-3.5 h-3.5 mt-px" />
+              <span className="leading-snug">{check}</span>
             </div>
           ))}
         </div>
@@ -106,14 +106,14 @@ export default function ModulesWall() {
         );
 
   return (
-    <section ref={ref} className="bg-bone py-24 md:py-32 px-6 border-b border-ledger/30" id="modules">
-      <div className="max-w-6xl mx-auto">
+    <section ref={ref} className="bg-bone py-24 md:py-32 border-b border-ledger/30" id="modules">
+      <div className="container-page">
         {/* Section number */}
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-sm text-vermilion font-bold tracking-widest uppercase">
-            Platform Capabilities // Revision 2026.11
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="font-mono text-xs sm:text-sm text-vermilion font-bold tracking-widest uppercase">
+            What’s Included
           </span>
-          <span className="font-mono text-xs text-verify font-bold bg-verify/10 px-3 py-1 rounded-full border border-verify/30">
+          <span className="font-mono text-xs text-verify font-bold bg-verify/10 px-3 py-1 rounded-full whitespace-nowrap border border-verify/30">
             8 / 8 MODULES ACTIVE
           </span>
         </div>
@@ -121,26 +121,26 @@ export default function ModulesWall() {
         {/* Heading */}
         <div className="mt-4 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b-2 border-ledger">
           <div>
-            <h2 className="font-display font-900 text-5xl sm:text-7xl md:text-8xl uppercase text-ink leading-[0.9]">
+            <h2 className="font-display font-900 display-2xl uppercase text-ink">
               The 8 Financial
               <br />
               <span className="text-verify">Guardrail Modules.</span>
             </h2>
             <p className="font-accent italic text-xl md:text-2xl text-ink/75 mt-4 max-w-2xl">
-              Every critical failure point in enterprise financial operations is governed by a dedicated, deterministic evaluator. Zero locked contracts.
+              Each risky step in a finance team’s work gets its own set of firm checks.
             </p>
           </div>
 
           {/* Metric Callout */}
-          <div className="bg-white border-2 border-ink p-4 rounded-lg shadow-sm text-center min-w-[200px]">
-            <span className="font-mono text-[10px] text-ink/50 uppercase tracking-widest block">
-              EVALUATOR COVERAGE
+          <div className="bg-white border-2 border-ink p-4 rounded-lg shadow-sm text-center self-start md:self-auto min-w-[180px]">
+            <span className="font-mono text-[11px] text-ink/50 uppercase tracking-widest block">
+              MODULES COVERED
             </span>
             <span className="font-display font-black text-4xl text-ink block mt-0.5">
               100%
             </span>
-            <span className="font-mono text-[10px] text-verify font-bold uppercase tracking-wider">
-              Full Runtime Suite
+            <span className="font-mono text-[11px] text-verify font-bold uppercase tracking-wider">
+              All eight
             </span>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function ModulesWall() {
         </div>
 
         {/* All 8 Modules Grid - All Unlocked */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-8">
           {filteredModules.map((mod) => (
             <ModuleCard key={mod.code} module={mod} />
           ))}
@@ -174,7 +174,7 @@ export default function ModulesWall() {
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚡</span>
             <p className="font-body text-sm text-ink/80">
-              <strong className="text-ink">Composable Financial Rails:</strong> Every module exposes standard gRPC & JSON APIs with PostgreSQL Row-Level Security. Plug them into existing ERPs, SAP, Netsuite, or modern payment flows.
+              <strong className="text-ink">Works with what you have:</strong> Each module has a standard API and keeps every company’s data separate. Connect it to SAP, NetSuite or your payment tools.
             </p>
           </div>
           <a

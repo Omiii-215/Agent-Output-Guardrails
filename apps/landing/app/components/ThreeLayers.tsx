@@ -6,91 +6,91 @@ import { useInView } from "@/lib/hooks";
 const LAYERS = [
   {
     layerNumber: "LAYER 01",
-    name: "AI Boundary & Quarantine",
-    tagline: "Before any token touches your application state",
+    name: "Check What Comes In",
+    tagline: "Before the AI’s output reaches your systems",
     icon: "🛡️",
-    badge: "INPUT HYGIENE",
+    badge: "INCOMING FILES",
     color: "border-l-vermilion",
     items: [
       {
-        title: "SHA-256 Byte Fingerprinting & Antivirus",
+        title: "File Fingerprint and Virus Scan",
         description:
-          "Every document enters an isolated quarantine bucket. File hashes, MIME types, and binary structures are verified before parsing.",
+          "Every document is held apart first. We record its fingerprint and check its type, size and contents before anything reads it.",
       },
       {
-        title: "Bounded Schema Extraction",
+        title: "A Fixed Form for the AI",
         description:
-          "The model cannot produce open-ended output. Responses must conform strictly to typed Pydantic contracts with exact field validations.",
+          "The AI can’t write whatever it likes. It can only fill in set fields, and each one is checked.",
       },
       {
-        title: "Coordinate-Mapped Citation Verification",
+        title: "Every Value Shows Its Source",
         description:
-          "Every vendor name, tax ID, line-item quantity, and subtotal must cite its exact page and bounding-box coordinates in the original PDF.",
+          "Each supplier name, tax ID, quantity and total has to point to the exact place it appears in the original document.",
       },
       {
-        title: "Adversarial Prompt-Injection Scanner",
+        title: "Hidden Instruction Scanner",
         description:
-          "Scans for white-on-white text, font manipulation, system-prompt override attempts, and instruction hijack tokens.",
+          "Looks for white-on-white text, disguised fonts, and lines that try to give the AI orders.",
       },
     ],
   },
   {
     layerNumber: "LAYER 02",
-    name: "Deterministic Policy Engine",
-    tagline: "Zero LLM code in the evaluation loop",
+    name: "Apply the Rules Exactly",
+    tagline: "No AI in the decision",
     icon: "⚙️",
-    badge: "FAIL-CLOSED LOGIC",
+    badge: "ERRORS STOP PAYMENTS",
     color: "border-l-ink",
     items: [
       {
-        title: "Exact Decimal & Integer Math",
+        title: "Exact Sums",
         description:
-          "No floating-point errors. Line items, tax formulas, currency conversions, and ledger balances are calculated using exact decimal representations.",
+          "No rounding surprises. Line items, tax, currency conversions and balances are worked out exactly, to the cent.",
       },
       {
-        title: "Immutable SHA-256 Snapshot",
+        title: "Locked Before Checking",
         description:
-          "Before policy evaluation begins, the entire payload is frozen into a cryptographic digest. If anything changes upstream, evaluation aborts.",
+          "Before the rules run, the invoice is locked with a fingerprint. If anything changes after that, the check stops.",
       },
       {
-        title: "Fail-Closed Execution (Crash ≠ Pass)",
+        title: "An Error Is Never a Yes",
         description:
-          "If a policy rule script times out, exhausts memory, or throws an unhandled exception, the proposal is frozen. A failure is NEVER an approval.",
+          "If a rule crashes, runs too long or runs out of memory, the payment is held. A failure never counts as approval.",
       },
       {
-        title: "Deterministic Exception Matching",
+        title: "Clear Exceptions",
         description:
-          "Reconciliations match exact 1:1 records. Any fee difference, split payment, or currency variance produces an explicit flagged exception.",
+          "Bank and ledger records are matched one to one. A fee, a split payment or a currency difference is flagged for a person to review.",
       },
     ],
   },
   {
     layerNumber: "LAYER 03",
-    name: "Maker-Checker & Execution Gateway",
-    tagline: "Enforcing separation of duties and zero double-spend",
+    name: "Approve and Pay Safely",
+    tagline: "Two people involved, and nothing paid twice",
     icon: "🏛️",
-    badge: "CRYPTOGRAPHIC CONTROL",
+    badge: "LOCKED APPROVALS",
     color: "border-l-verify",
     items: [
       {
-        title: "Enforced Maker-Checker Separation",
+        title: "Maker-Checker",
         description:
-          "The operator or AI pipeline that extracts and proposes a payment is mathematically blocked by database row-level security from approving it.",
+          "The person or AI that prepares a payment is blocked by the system from approving it.",
       },
       {
-        title: "Server-Side Digest Locking",
+        title: "Approval Tied to the Details",
         description:
-          "The approver signs off on the exact frozen SHA-256 digest string. Any silent modification to amount, recipient, or bank details voids the sign-off.",
+          "The approver signs off on one exact payment. Any quiet change to the amount, payee or bank details cancels the approval.",
       },
       {
-        title: "Spend Reservation Concurrency Locks",
+        title: "Money Set Aside First",
         description:
-          "Concurrent requests place a ledger hold before execution begins, mathematically eliminating overspend and balance-drain race conditions.",
+          "Each payment reserves its money before it’s sent, so two payments at the same moment can’t overspend the budget.",
       },
       {
-        title: "Idempotent Reconcile Loop (Never Resend)",
+        title: "Check, Never Resend",
         description:
-          "When a bank connection drops or returns UNKNOWN, FinGuard probes the status via read-only channels. It NEVER fires a duplicate payment request.",
+          "If the bank connection drops or the result is unknown, FinGuard asks the bank what happened. It never sends the payment a second time.",
       },
     ],
   },
@@ -103,20 +103,19 @@ export default function ThreeLayers() {
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
-      className="bg-bone py-24 md:py-32 px-6 border-b border-ledger relative"
+      className="bg-bone py-24 md:py-32 border-b border-ledger relative"
       id="architecture"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="container-page">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="font-mono text-xs uppercase tracking-widest text-vermilion font-bold">
-            The Unique Architectural Solution
+            How It’s Built
           </span>
-          <h2 className="font-display font-[900] text-5xl md:text-7xl uppercase text-ink mt-2 leading-[0.95]">
-            The Three Layers of Deterministic Control.
+          <h2 className="font-display font-[900] display-xl uppercase text-ink mt-3">
+            Three Layers of Firm Controls.
           </h2>
           <p className="font-accent italic text-xl text-ink/75 mt-4">
-            How FinGuard wraps untrusted AI inside mathematical guarantees
-            before any recommendation touches your banking or ERP layer.
+            How FinGuard puts firm checks around AI before any suggestion gets near your bank or accounting system.
           </p>
         </div>
 

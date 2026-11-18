@@ -21,32 +21,31 @@ export default function LivePolicySimulator() {
 
   let blockReason = "";
   if (simulateCrash) {
-    blockReason = "POLICY CRASH DETECTED // FAIL-CLOSED: CRASH ≠ PASS";
+    blockReason = "THE RULE CHECK CRASHED, SO THE PAYMENT IS HELD. AN ERROR IS NEVER A YES.";
   } else if (injectAttack) {
-    blockReason = "EMBEDDED INSTRUCTION DETECTED IN PDF // QUARANTINE HOLD";
+    blockReason = "HIDDEN INSTRUCTIONS FOUND IN THE PDF. THE FILE IS ON HOLD.";
   } else if (selfApproveAttempt) {
-    blockReason = "MAKER-CHECKER VIOLATION: PROPOSER CANNOT APPROVE OWN SPEND";
+    blockReason = "YOU CAN’T APPROVE A PAYMENT YOU ASKED FOR.";
   } else if (limitExceeded) {
-    blockReason = "EXCEEDS AUTOMATED AUTHORITY LIMIT ($25,000.00) // DUAL APPROVAL REQUIRED";
+    blockReason = "OVER THE $25,000 LIMIT. TWO APPROVALS NEEDED.";
   }
 
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
-      className="bg-bone py-24 md:py-32 px-6 border-b border-ledger"
+      className="bg-bone py-24 md:py-32 border-b border-ledger"
       id="simulator"
     >
-      <div className="max-w-6xl mx-auto">
+      <div className="container-page">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="font-mono text-xs uppercase tracking-widest text-vermilion font-bold">
-            Interactive Test Sandbox
+            Try It Yourself
           </span>
-          <h2 className="font-display font-[900] text-5xl md:text-7xl uppercase text-ink mt-2 leading-[0.95]">
-            Test The Deterministic Engine Live.
+          <h2 className="font-display font-[900] display-xl uppercase text-ink mt-3">
+            Test the Rules Live.
           </h2>
           <p className="font-accent italic text-xl text-ink/75 mt-4">
-            Toggle edge cases below to see how FinGuard&apos;s invariant rules
-            eliminate silent failures before any action moves to execution.
+            Switch on the tricky cases below and watch FinGuard stop them before any money moves.
           </p>
         </div>
 
@@ -56,10 +55,10 @@ export default function LivePolicySimulator() {
           <div className="lg:col-span-5 bg-white border-2 border-ink rounded-xl p-6 shadow-xl space-y-6">
             <div className="border-b border-ledger pb-3">
               <span className="font-mono text-xs text-ink/40 uppercase">
-                Step 1: Adjust Transaction Parameters
+                Step 1: Set the Payment
               </span>
               <h3 className="font-display font-bold text-xl uppercase text-ink">
-                Simulated Invoice Proposal
+                Sample Invoice Payment
               </h3>
             </div>
 
@@ -82,9 +81,9 @@ export default function LivePolicySimulator() {
                 onChange={(e) => setInvoiceAmount(Number(e.target.value))}
                 className="w-full h-2 bg-bone rounded-lg appearance-none cursor-pointer accent-vermilion"
               />
-              <div className="flex justify-between font-mono text-[10px] text-ink/40 mt-1">
+              <div className="flex justify-between font-mono text-[11px] text-ink/40 mt-1">
                 <span>$2,000 (Tier 1)</span>
-                <span>$25,000 (Authority Limit)</span>
+                <span>$25,000 (Approval Limit)</span>
                 <span>$50,000 (Tier 3)</span>
               </div>
             </div>
@@ -92,7 +91,7 @@ export default function LivePolicySimulator() {
             {/* Edge-Case Toggles */}
             <div className="space-y-3 pt-2">
               <span className="font-mono text-xs uppercase font-bold text-ink/60 block">
-                Step 2: Inject Chaos & Adversarial Tests
+                Step 2: Add a Problem
               </span>
 
               {/* Toggle 1: Policy Crash */}
@@ -106,10 +105,10 @@ export default function LivePolicySimulator() {
               >
                 <div>
                   <div className="text-xs font-mono uppercase">
-                    Test 1: Policy Engine Timeout / Crash
+                    Test 1: The Rule Check Crashes
                   </div>
                   <div className="text-[11px] font-body text-ink/60 mt-0.5">
-                    Microservice throws 504 Gateway Timeout
+                    A service times out in the middle of a check
                   </div>
                 </div>
                 <span className="text-sm font-mono font-bold">
@@ -128,10 +127,10 @@ export default function LivePolicySimulator() {
               >
                 <div>
                   <div className="text-xs font-mono uppercase">
-                    Test 2: Hidden Prompt Injection
+                    Test 2: Hidden Instructions
                   </div>
                   <div className="text-[11px] font-body text-ink/60 mt-0.5">
-                    Adversary inserted hidden text in PDF footer
+                    Someone hid text in the PDF footer
                   </div>
                 </div>
                 <span className="text-sm font-mono font-bold">
@@ -150,10 +149,10 @@ export default function LivePolicySimulator() {
               >
                 <div>
                   <div className="text-xs font-mono uppercase">
-                    Test 3: Proposer Approves Own Payment
+                    Test 3: Approving Your Own Payment
                   </div>
                   <div className="text-[11px] font-body text-ink/60 mt-0.5">
-                    Attempting single-actor unauthorized bypass
+                    One person tries to do both steps
                   </div>
                 </div>
                 <span className="text-sm font-mono font-bold">
@@ -170,18 +169,18 @@ export default function LivePolicySimulator() {
                 <span className="w-3 h-3 rounded-full bg-vermilion/80" />
                 <span className="w-3 h-3 rounded-full bg-verify/80" />
                 <span className="font-mono text-xs uppercase text-bone/60 ml-2">
-                  finguard-runtime // evaluator-v1
+                  finguard // rule checker
                 </span>
               </div>
               <div className="font-mono text-xs text-bone/40">
-                TENANT: acme_corp_prod
+                COMPANY: acme
               </div>
             </div>
 
             {/* Live Status Header */}
             <div className="my-6 p-4 rounded-lg bg-carbon border border-bone/10 flex items-center justify-between">
               <div>
-                <span className="font-mono text-[10px] text-bone/40 uppercase tracking-widest block">
+                <span className="font-mono text-[11px] text-bone/40 uppercase tracking-widest block">
                   TRANSACTION STATE
                 </span>
                 <span
@@ -198,77 +197,77 @@ export default function LivePolicySimulator() {
                     isBlocked ? "stamp-vermilion" : "stamp-verify"
                   }`}
                 >
-                  {isBlocked ? "HOLD REQUIRED" : "PRE-CHECK PASSED"}
+                  {isBlocked ? "ON HOLD" : "CHECKS PASSED"}
                 </span>
               </div>
             </div>
 
             {/* Rule Checklist with live animated status */}
             <div className="space-y-3 font-mono text-xs">
-              <div className="flex items-center justify-between p-2 rounded bg-bone/5">
-                <span className="text-bone/70">1. Document Quarantine & Virus Scan</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-2.5 py-2 rounded bg-bone/5">
+                <span className="text-bone/70">1. File Check & Virus Scan</span>
                 <span className="text-verify font-bold">✓ PASS [sha256:4b91…e8]</span>
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded bg-bone/5">
-                <span className="text-bone/70">2. Prompt Injection Scanner</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-2.5 py-2 rounded bg-bone/5">
+                <span className="text-bone/70">2. Hidden Instruction Scan</span>
                 {injectAttack ? (
                   <span className="text-vermilion font-bold animate-pulse">
-                    ✕ FLAGGED [Embedded Instruction]
+                    ✕ FLAGGED [hidden instruction]
                   </span>
                 ) : (
-                  <span className="text-verify font-bold">✓ CLEAN [0 anomalies]</span>
+                  <span className="text-verify font-bold">✓ CLEAN [nothing found]</span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded bg-bone/5">
-                <span className="text-bone/70">3. Deterministic Policy Evaluator</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-2.5 py-2 rounded bg-bone/5">
+                <span className="text-bone/70">3. Spending Rules</span>
                 {simulateCrash ? (
                   <span className="text-vermilion font-bold animate-pulse">
-                    ✕ FAIL-CLOSED [Timeout: crash ≠ pass]
+                    ✕ HELD [the check crashed]
                   </span>
                 ) : limitExceeded ? (
                   <span className="text-vermilion font-bold">
-                    ✕ EXCEEDED [&gt; $25,000 threshold]
+                    ✕ TOO HIGH [over $25,000]
                   </span>
                 ) : (
                   <span className="text-verify font-bold">
-                    ✓ APPROVED [Within $25,000 limit]
+                    ✓ OK [under $25,000]
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded bg-bone/5">
-                <span className="text-bone/70">4. Maker-Checker Separation</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-2.5 py-2 rounded bg-bone/5">
+                <span className="text-bone/70">4. Second Person Approves</span>
                 {selfApproveAttempt ? (
                   <span className="text-vermilion font-bold animate-pulse">
-                    ✕ REJECTED [Proposer ≠ Approver]
+                    ✕ REJECTED [can’t approve your own]
                   </span>
                 ) : (
                   <span className="text-verify font-bold">
-                    ✓ ENFORCED [Independent Sign-off]
+                    ✓ REQUIRED [different approver]
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded bg-bone/5">
-                <span className="text-bone/70">5. Idempotent Spend Reservation</span>
-                <span className="text-verify font-bold">✓ HELD [Prevents Double-Spend]</span>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3 px-2.5 py-2 rounded bg-bone/5">
+                <span className="text-bone/70">5. Money Set Aside</span>
+                <span className="text-verify font-bold">✓ RESERVED [can’t pay twice]</span>
               </div>
             </div>
 
             {/* Reason Banner if Blocked */}
             {isBlocked && (
               <div className="mt-6 p-4 rounded bg-vermilion/15 border border-vermilion/40 text-vermilion font-mono text-xs leading-relaxed animate-fade-in">
-                <span className="font-bold block mb-1">DETERMINISTIC GUARD TRIGGERED:</span>
+                <span className="font-bold block mb-1">STOPPED BY A RULE:</span>
                 {blockReason}
               </div>
             )}
 
             {!isBlocked && (
               <div className="mt-6 p-4 rounded bg-verify/15 border border-verify/40 text-verify font-mono text-xs leading-relaxed">
-                <span className="font-bold block mb-1">CRYPTOGRAPHIC DIGEST GENERATED:</span>
-                sha256:9c1a084ef71d3298a44b11f62d08c50e29207da · Ready for Approver sign-off.
+                <span className="font-bold block mb-1">PAYMENT FINGERPRINT CREATED:</span>
+                <span className="break-all">sha256:9c1a084ef71d3298a44b11f62d08c50e29207da</span> · Ready for the approver.
               </div>
             )}
           </div>

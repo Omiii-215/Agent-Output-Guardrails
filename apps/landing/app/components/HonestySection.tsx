@@ -7,40 +7,40 @@ export default function HonestySection() {
 
   const GUARANTEES = [
     {
-      title: "Tenant Isolation with RLS",
+      title: "Each Company’s Data Stays Separate",
       code: "GUARANTEE 01",
       detail:
-        "Every database query runs under PostgreSQL Row-Level Security. Attempted cross-tenant access returns an immediate HTTP 404. Zero cross-tenant data leaks.",
+        "Every database query is limited to one company. Asking for another company’s data just returns ‘not found’.",
     },
     {
-      title: "Fail-Closed Execution (Crash ≠ Pass)",
+      title: "An Error Is Never a Yes",
       code: "GUARANTEE 02",
       detail:
-        "If a policy evaluator throws an exception, times out, or runs out of memory, the payment is held. In financial infrastructure, a failure is never an approval.",
+        "If a check fails, times out or runs out of memory, the payment is held. In finance, a failure must never count as approval.",
     },
     {
-      title: "Cryptographic Maker-Checker",
+      title: "Two People for Every Payment",
       code: "GUARANTEE 03",
       detail:
-        "The actor who proposes or extracts an invoice is mathematically forbidden from approving it. Approvers sign off on an immutable server-side SHA-256 digest.",
+        "Whoever prepares or proposes a payment can’t approve it. The approver signs off on one exact, locked version of the payment.",
     },
     {
-      title: "Zero Double-Spend State Machine",
+      title: "Never Paid Twice",
       code: "GUARANTEE 04",
       detail:
-        "Concurreny holds reserve ledger balance before execution. If a bank API times out, status is marked UNKNOWN and probed. Retries are strictly forbidden.",
+        "Money is set aside before a payment goes out. If the bank doesn’t reply, the payment is marked unknown and checked. It is never resent.",
     },
     {
-      title: "Tamper-Evident Chained Audit",
+      title: "A Record No One Can Quietly Change",
       code: "GUARANTEE 05",
       detail:
-        "Every event, field extraction, user comment, and approval is written to an append-only ledger with cryptographic hash chaining (prev_hash → current_hash).",
+        "Every event, value read, comment and approval goes into a log that can only grow. Each entry is linked to the one before, so any edit shows.",
     },
     {
-      title: "Bounded Schema with Citations",
+      title: "AI Has to Show Its Sources",
       code: "GUARANTEE 06",
       detail:
-        "AI output is schema-validated and every extracted dollar amount, vendor name, and line item is checked against source text coordinates before being shown.",
+        "AI fills in a fixed form, and every amount, supplier name and line item is checked against the document before anyone sees it.",
     },
   ];
 
@@ -50,24 +50,23 @@ export default function HonestySection() {
       className="bg-bone perforated-top perforated-bottom py-24 md:py-32 lg:py-36 relative overflow-hidden"
       id="guarantees"
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-8 relative z-10">
+      <div className="container-page relative z-10">
         {/* Big headline */}
         <div className="text-center mb-16">
           <span className="font-mono text-xs uppercase tracking-widest text-vermilion font-bold">
-            Deterministic Financial Engineering
+            Built for Real Money
           </span>
           <h2
-            className={`font-display font-[900] text-5xl sm:text-7xl md:text-8xl lg:text-9xl uppercase text-ink mt-2 leading-[0.9] transition-all duration-700 ${
+            className={`font-display font-[900] display-2xl uppercase text-ink mt-3 transition-all duration-700 ${
               inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
             Not a Toy Demo.
             <br />
-            A Working Financial Runtime.
+            A Working Financial System.
           </h2>
           <p className="font-accent italic text-xl md:text-2xl text-ink/75 max-w-2xl mx-auto mt-6">
-            Finance cannot run on probabilistic chat prompts. FinGuard is built as
-            an enforceable, deterministic control plane for enterprise money.
+            Finance can’t run on chatbot guesses. FinGuard is a set of firm controls that every payment has to pass.
           </p>
         </div>
 
@@ -81,14 +80,14 @@ export default function HonestySection() {
             <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b-2 border-ledger gap-4">
               <div>
                 <span className="font-mono text-xs text-ink/40 uppercase tracking-widest">
-                  ENGINE SPECIFICATION // REVISION 2026.11
+                  WHAT WE PROMISE
                 </span>
                 <h3 className="font-display font-[900] text-3xl uppercase text-ink mt-1">
-                  The FinGuard Invariant Guarantees
+                  Six Things That Always Hold
                 </h3>
               </div>
               <div className="font-mono text-xs text-ink/60 bg-bone px-3 py-1.5 rounded border border-ledger self-start md:self-auto">
-                STATUS: PRODUCTION RUNTIME
+                ENFORCED IN CODE
               </div>
             </div>
 
@@ -99,7 +98,7 @@ export default function HonestySection() {
                   key={g.code}
                   className="border-l-2 border-ink pl-4 py-1 hover:border-vermilion transition-colors duration-200"
                 >
-                  <span className="font-mono text-[10px] uppercase text-vermilion font-bold tracking-wider">
+                  <span className="font-mono text-[11px] uppercase text-vermilion font-bold tracking-wider">
                     {g.code}
                   </span>
                   <h4 className="font-display font-bold text-lg uppercase text-ink mt-0.5">
@@ -115,9 +114,7 @@ export default function HonestySection() {
             {/* Bottom Statement */}
             <div className="mt-8 pt-6 border-t-2 border-ledger flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="font-body text-xs text-ink/60 max-w-lg">
-                Payments and ledger movements execute through verified,
-                tamper-evident state machines. Zero probabilistic drift reaches
-                your banking layer.
+                Payments only move through checked, recorded steps. AI guesswork never reaches your bank.
               </p>
               <span className="font-mono text-xs text-verify font-bold uppercase tracking-wider whitespace-nowrap">
                 ✓ ALL CONTROLS VERIFIED
